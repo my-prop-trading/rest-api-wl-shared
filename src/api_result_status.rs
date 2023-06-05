@@ -49,6 +49,12 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-18"; description="AccessClaimRequired")]
     AccessClaimRequired = -18,
 
+    #[http_enum_case(id="-19"; description="TraderPackageNotFound")]
+    TraderPackageNotFound = -19,
+
+    #[http_enum_case(id="-20"; description="OrderNotFound")]
+    OrderNotFound = -20,
+
     #[http_enum_case(id="-999"; description="Force Update required")]
     ForceUpdateIsRequired = -999,
 }
@@ -71,6 +77,8 @@ impl ApiResultStatus {
             ApiResultStatus::AccessTokenInvalid => 401,
             ApiResultStatus::AccessClaimRequired => 403,
             ApiResultStatus::ForceUpdateIsRequired => 200,
+            ApiResultStatus::TraderPackageNotFound => 400,
+            ApiResultStatus::OrderNotFound => 400,
         }
     }
 }
