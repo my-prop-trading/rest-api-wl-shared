@@ -58,6 +58,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-21"; description="OrderNotPaid")]
     OrderNotPaid = -21,
 
+    #[http_enum_case(id="-30"; description="InvalidCodeEntered")]
+    InvalidCodeEntered = -30,
+
     #[http_enum_case(id="-999"; description="Force Update required")]
     ForceUpdateIsRequired = -999,
 }
@@ -83,6 +86,7 @@ impl ApiResultStatus {
             ApiResultStatus::TraderPackageNotFound => 400,
             ApiResultStatus::OrderNotFound => 400,
             ApiResultStatus::OrderNotPaid => 400,
+            ApiResultStatus::InvalidCodeEntered => 400,
         }
     }
 }
