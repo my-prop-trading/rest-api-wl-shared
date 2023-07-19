@@ -7,6 +7,8 @@ use my_no_sql_tcp_reader::MyNoSqlDataReader;
 
 use super::{GetSessionToken, SessionEntity, TradingPlatformRequestCredentials};
 
+pub const KV_BRAND_ID: &str = "BRAND_ID";
+
 pub struct AuthMiddleware {
     sessions_reader: Arc<MyNoSqlDataReader<SessionEntity>>,
 }
@@ -39,8 +41,14 @@ impl HttpServerMiddleware for AuthMiddleware {
             return get_next.next(ctx).await;
         }
 
+        let token_entity = token_entity.unwrap();
+
+        let brand_id = token_entity.brand_id.clone();
+        ctx.request
+            .set_key_value(KV_BRAND_ID.to_string(), brand_id.into_bytes());
+
         ctx.credentials = Some(Box::new(TradingPlatformRequestCredentials::new(
-            token_entity.unwrap(),
+            token_entity,
         )));
 
         get_next.next(ctx).await
