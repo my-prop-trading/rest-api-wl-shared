@@ -9,13 +9,12 @@ impl GetClientId for HttpContext {
         if let Some(credentials) = self.credentials.as_ref() {
             Ok(credentials.get_id())
         } else {
-            Err(HttpFailResult {
-                content_type: WebContentType::Text,
-                status_code: 401,
-                content: "Unauthenticated".as_bytes().to_vec(),
-                write_telemetry: false,
-                write_to_log: false,
-            })
+            Err(HttpFailResult::new(                WebContentType::Text,
+                401,
+                "Unauthenticated".as_bytes().to_vec(),
+                false,
+                false,) 
+            )
         }
     }
 }

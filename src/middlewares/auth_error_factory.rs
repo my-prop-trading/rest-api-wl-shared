@@ -1,3 +1,4 @@
+use my_http_server::WebContentType;
 use my_http_server_controllers::controllers::{documentation::DataTypeProvider, AuthErrorFactory};
 use my_http_server_swagger::MyHttpObjectStructure;
 use serde::Serialize;
@@ -21,13 +22,11 @@ impl AuthErrorFactory for AuthErrorFactoryWl {
             result: ApiResultStatus::AccessClaimRequired,
             data: claim_name,
         };
-        my_http_server::HttpFailResult {
-            content_type: my_http_server::WebContentType::Json,
-            status_code: 403,
-            content: serde_json::to_vec(&content).unwrap(),
-            write_telemetry: false,
-            write_to_log: false,
-        }
+        my_http_server::HttpFailResult::new(WebContentType::Text,
+            401,
+            "Unauthenticated".as_bytes().to_vec(),
+            false,
+            false)
     }
 
     fn get_global_http_fail_result_types(
