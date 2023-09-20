@@ -1,3 +1,4 @@
+service_sdk::macros::use_my_http_server!();
 use my_http_server::{HttpContext, HttpFailResult, WebContentType};
 
 pub trait GetClientId {

@@ -1,6 +1,7 @@
+service_sdk::macros::use_my_http_server!();
+
 use crate::ApiResultStatus;
 use my_http_server::HttpFailResult;
-use my_http_server_swagger::MyHttpObjectStructure;
 use serde::Serialize;
 
 #[derive(Serialize, Debug, MyHttpObjectStructure)]
@@ -59,13 +60,14 @@ impl AuthenticationFailedApiResponse {
     }
 }
 
-use my_http_server_controllers::controllers::documentation::{
+use my_http_server::controllers::documentation::{
     data_types::HttpDataType, out_results::HttpResult,
 };
+use service_sdk::my_http_server::macros::MyHttpObjectStructure;
 
 pub struct AuthFailResponseFactory;
 
-impl my_http_server_controllers::controllers::AuthErrorFactory for AuthFailResponseFactory {
+impl my_http_server::controllers::AuthErrorFactory for AuthFailResponseFactory {
     fn get_not_authenticated(&self) -> my_http_server::HttpFailResult {
         return AuthenticationFailedApiResponse::new(
             ApiResultStatus::AccessTokenInvalid,

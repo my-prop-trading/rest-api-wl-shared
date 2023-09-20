@@ -1,7 +1,9 @@
+service_sdk::macros::use_my_http_server!();
+
 use std::sync::Arc;
 
 use my_http_server::{RequestCredentials, RequestClaim};
-use rust_extensions::date_time::DateTimeAsMicroseconds;
+use service_sdk::rust_extensions::date_time::DateTimeAsMicroseconds;
 
 use super::SessionEntity;
 

@@ -1,8 +1,11 @@
+service_sdk::macros::use_my_http_server!();
+
 use serde::{Deserialize, Serialize};
+use service_sdk::my_no_sql_sdk;
 
 pub const SESSION_PARTITION_KEY_VALUE: &str = "t";
 
-#[my_no_sql_macros::my_no_sql_entity("sessionsentites")]
+#[service_sdk::my_no_sql_sdk::macros::my_no_sql_entity("sessionsentites")]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct SessionEntity {

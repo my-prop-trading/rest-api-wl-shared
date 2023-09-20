@@ -1,20 +1,21 @@
+service_sdk::macros::use_my_http_server!();
 use std::sync::Arc;
 
 use my_http_server::{
     HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
 };
-use my_no_sql_tcp_reader::MyNoSqlDataReader;
+use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReader;
 
 use super::{GetSessionToken, SessionEntity, TradingPlatformRequestCredentials};
 
 pub const KV_BRAND_ID: &str = "BRAND_ID";
 
 pub struct AuthMiddleware {
-    sessions_reader: Arc<MyNoSqlDataReader<SessionEntity>>,
+    sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
 }
 
 impl AuthMiddleware {
-    pub fn new(sessions_reader: Arc<MyNoSqlDataReader<SessionEntity>>) -> Self {
+    pub fn new(sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>) -> Self {
         Self { sessions_reader }
     }
 }
