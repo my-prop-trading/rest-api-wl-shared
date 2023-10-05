@@ -6,16 +6,18 @@ use my_http_server::{
 };
 use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReader;
 
-use super::{GetSessionToken, SessionEntity, TradingPlatformRequestCredentials};
+use crate::KV_BRAND_ID;
 
-pub const KV_BRAND_ID: &str = "BRAND_ID";
+use super::{GetSessionToken, SessionEntity, TradingPlatformRequestCredentials};
 
 pub struct AuthMiddleware {
     sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
 }
 
 impl AuthMiddleware {
-    pub fn new(sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>) -> Self {
+    pub fn new(
+        sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
+    ) -> Self {
         Self { sessions_reader }
     }
 }

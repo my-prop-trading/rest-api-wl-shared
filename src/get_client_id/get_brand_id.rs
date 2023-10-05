@@ -1,7 +1,7 @@
 service_sdk::macros::use_my_http_server!();
-use my_http_server::{HttpFailResult, HttpContext};
+use my_http_server::{HttpContext, HttpFailResult};
 
-use crate::middlewares::KV_BRAND_ID;
+pub const KV_BRAND_ID: &str = "BRAND_ID";
 
 pub trait GetBrandId {
     fn get_brand_id(&self) -> Result<&str, HttpFailResult>;
