@@ -1,7 +1,7 @@
 service_sdk::macros::use_my_http_server!();
 
-use my_http_server::WebContentType;
 use my_http_server::controllers::{documentation::DataTypeProvider, AuthErrorFactory};
+use my_http_server::WebContentType;
 use serde::Serialize;
 use service_sdk::my_http_server::macros::MyHttpObjectStructure;
 
@@ -20,21 +20,22 @@ impl AuthErrorFactory for AuthErrorFactoryWl {
     }
 
     fn get_not_authorized(&self, claim_name: String) -> my_http_server::HttpFailResult {
-        let content = AccessClaimRequired {
+        let _content = AccessClaimRequired {
             result: ApiResultStatus::AccessClaimRequired,
             data: claim_name,
         };
-        my_http_server::HttpFailResult::new(WebContentType::Text,
+        my_http_server::HttpFailResult::new(
+            WebContentType::Text,
             401,
             "Unauthenticated".as_bytes().to_vec(),
             false,
-            false)
+            false,
+        )
     }
 
     fn get_global_http_fail_result_types(
         &self,
-    ) -> Option<Vec<my_http_server::controllers::documentation::out_results::HttpResult>>
-    {
+    ) -> Option<Vec<my_http_server::controllers::documentation::out_results::HttpResult>> {
         use my_http_server::controllers::documentation::out_results::HttpResult;
         vec![
             HttpResult {

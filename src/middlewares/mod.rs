@@ -1,4 +1,6 @@
+#[cfg(feature = "auth-middleware")]
 mod auth_middleware;
+#[cfg(feature = "auth-middleware")]
 pub use auth_middleware::*;
 mod auth_error_factory;
 mod auth_failed;
