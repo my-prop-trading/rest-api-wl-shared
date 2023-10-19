@@ -69,6 +69,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-50"; description="NotAuthorized")]
     NotAuthorized = -50,
 
+    #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
+    UserHasOpenPositions = -100,
+
     #[http_enum_case(id="-999"; description="Force Update required")]
     ForceUpdateIsRequired = -999,
 }
@@ -97,6 +100,7 @@ impl ApiResultStatus {
             ApiResultStatus::InvalidCodeEntered => 400,
             ApiResultStatus::NotEnoughBalance => 400,
             ApiResultStatus::NotAuthorized => 401,
+            ApiResultStatus::UserHasOpenPositions => 400,
         }
     }
 }
