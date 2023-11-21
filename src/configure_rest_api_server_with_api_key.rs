@@ -6,11 +6,11 @@ use service_sdk::{
     HttpServerBuilder,
 };
 
-use crate::middlewares::{AuthFailResponseFactory, AuthSessionMiddleware, SessionEntity};
+use crate::middlewares::{AuthFailResponseFactory, OpenApiKeyEntity, AuthApiKeyMiddleware};
 
-pub fn configure_rest_api_server(
+pub fn configure_rest_api_server_with_api_key(
     http_server_builder: &mut HttpServerBuilder,
-    sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
+    sessions_reader: Arc<dyn MyNoSqlDataReader<OpenApiKeyEntity> + Send + Sync + 'static>,
 ) {
     http_server_builder.set_authorization(ControllersAuthorization::BearerAuthentication {
         global: true,
@@ -19,5 +19,5 @@ pub fn configure_rest_api_server(
 
     http_server_builder.set_auth_error_factory(AuthFailResponseFactory);
 
-    http_server_builder.add_auth_middleware(Arc::new(AuthSessionMiddleware::new(sessions_reader)));
+    http_server_builder.add_auth_middleware(Arc::new(AuthApiKeyMiddleware::new(sessions_reader)));
 }
