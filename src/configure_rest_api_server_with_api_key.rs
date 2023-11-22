@@ -12,7 +12,7 @@ pub fn configure_rest_api_server_with_api_key(
     http_server_builder: &mut HttpServerBuilder,
     sessions_reader: Arc<dyn MyNoSqlDataReader<OpenApiKeyEntity> + Send + Sync + 'static>,
 ) {
-    http_server_builder.set_authorization(ControllersAuthorization::BearerAuthentication {
+    http_server_builder.set_authorization(ControllersAuthorization::ApiKeys {
         global: true,
         global_claims: RequiredClaims::no_claims(),
     });
