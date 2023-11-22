@@ -34,9 +34,8 @@ impl GetSessionApiKey for HttpContext {
         let auth_header = self.request.get_header(API_KEY_HEADER)?;
 
         let bytes = auth_header.as_bytes();
-        let token = extract_token(bytes)?;
 
-        match std::str::from_utf8(token) {
+        match std::str::from_utf8(bytes) {
             Ok(result) => {
                 Some(result)
             },
@@ -89,7 +88,7 @@ mod tests {
         let mut body = Request::<Body>::new(body);
         body.headers_mut().append(
             super::API_KEY_HEADER,
-            HeaderValue::from_str("ApiKey 1234567890").unwrap(),
+            HeaderValue::from_str("1234567890").unwrap(),
         );
         let addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 5000));
         let http_req = HttpRequest::new(body, addr);
