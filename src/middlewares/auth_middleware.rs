@@ -9,7 +9,7 @@ use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReader;
 use crate::KV_BRAND_ID;
 
 use super::{
-    AuthScheme, GetSessionToken, OpenApiKeyEntity, SessionEntity, TradingPlatformRequestCredentials,
+    GetSessionToken, OpenApiKeyEntity, SessionEntity, TradingPlatformRequestCredentials, GetSessionApiKey,
 };
 
 pub struct AuthSessionMiddleware {
@@ -54,13 +54,7 @@ impl HttpServerMiddleware for AuthSessionMiddleware {
             return get_next.next(ctx).await;
         }
 
-        let (session_id, auth_scheme) = session_token.unwrap();
-
-        //Only process bearer reqquests!
-        match auth_scheme {
-            AuthScheme::Bearer => {}
-            _ => return get_next.next(ctx).await,
-        }
+        let session_id = session_token.unwrap();
 
         let token_entity = self
             .sessions_reader
@@ -92,19 +86,13 @@ impl HttpServerMiddleware for AuthApiKeyMiddleware {
         ctx: &mut HttpContext,
         get_next: &mut HttpServerRequestFlow,
     ) -> Result<HttpOkResult, HttpFailResult> {
-        let session_token = ctx.get_session_token();
+        let session_token = ctx.get_session_api_key();
 
         if session_token.is_none() {
             return get_next.next(ctx).await;
         }
 
-        let (session_id, auth_scheme) = session_token.unwrap();
-
-        //Only process apikeys requests!
-        match auth_scheme {
-            AuthScheme::ApiKey => {}
-            _ => return get_next.next(ctx).await,
-        }
+        let session_id = session_token.unwrap();
 
         let token_entity = self
             .api_key_reader
