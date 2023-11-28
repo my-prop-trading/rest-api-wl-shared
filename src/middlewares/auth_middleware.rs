@@ -4,40 +4,32 @@ use std::sync::Arc;
 use my_http_server::{
     HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
 };
-use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReader;
+use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReaderTcp;
 
 use crate::KV_BRAND_ID;
 
 use super::{
-    GetSessionToken, OpenApiKeyEntity, SessionEntity, TradingPlatformRequestCredentials, GetSessionApiKey,
+    GetSessionApiKey, GetSessionToken, OpenApiKeyEntity, SessionEntity,
+    TradingPlatformRequestCredentials,
 };
 
 pub struct AuthSessionMiddleware {
-    sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
+    sessions_reader: Arc<MyNoSqlDataReaderTcp<SessionEntity>>,
 }
 
 pub struct AuthApiKeyMiddleware {
-    api_key_reader: Arc<dyn MyNoSqlDataReader<OpenApiKeyEntity> + Send + Sync + 'static>,
+    api_key_reader: Arc<MyNoSqlDataReaderTcp<OpenApiKeyEntity>>,
 }
 
 impl AuthSessionMiddleware {
-    pub fn new(
-        sessions_reader: Arc<dyn MyNoSqlDataReader<SessionEntity> + Send + Sync + 'static>,
-    ) -> Self {
-        Self {
-            sessions_reader,
-        }
+    pub fn new(sessions_reader: Arc<MyNoSqlDataReaderTcp<SessionEntity>>) -> Self {
+        Self { sessions_reader }
     }
 }
 
-
 impl AuthApiKeyMiddleware {
-    pub fn new(
-        api_key_reader: Arc<dyn MyNoSqlDataReader<OpenApiKeyEntity> + Send + Sync + 'static>,
-    ) -> Self {
-        Self {
-            api_key_reader,
-        }
+    pub fn new(api_key_reader: Arc<MyNoSqlDataReaderTcp<OpenApiKeyEntity>>) -> Self {
+        Self { api_key_reader }
     }
 }
 
