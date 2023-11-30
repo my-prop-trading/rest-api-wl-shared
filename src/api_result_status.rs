@@ -72,6 +72,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
+    #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
+    BrandIsNotSetUp = -900,
+
     #[http_enum_case(id="-999"; description="Force Update required")]
     ForceUpdateIsRequired = -999,
 }
@@ -101,6 +104,7 @@ impl ApiResultStatus {
             ApiResultStatus::NotEnoughBalance => 400,
             ApiResultStatus::NotAuthorized => 401,
             ApiResultStatus::UserHasOpenPositions => 400,
+            ApiResultStatus::BrandIsNotSetUp => 500,
         }
     }
 }
