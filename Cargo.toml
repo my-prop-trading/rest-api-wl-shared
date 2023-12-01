@@ -16,6 +16,7 @@ service-sdk = { tag = "0.2.5", git = "https://github.com/MyJetTools/service-sdk.
     "my-nosql-sdk",
 ] }
 
+regex = "1.5.4"
 
 serde = { version = "*", features = ["derive"] }
 serde_repr = "*"

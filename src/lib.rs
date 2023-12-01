@@ -4,6 +4,10 @@ pub mod middlewares;
 pub use api_result_status::*;
 pub use get_client_id::*;
 
+
+mod validators;
+pub use validators::*;
+
 #[cfg(feature = "auth-middleware")]
 mod configure_rest_api_server;
 #[cfg(feature = "auth-middleware")]
