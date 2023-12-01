@@ -132,7 +132,7 @@ pub fn validate_date_of_birth(
     ));
 }
 
-pub fn validate_date_of_optional(
+pub fn validate_date_of_birth_optional(
     _ctx: &HttpContext,
     value: &Option<DateTimeAsMicroseconds>,
 ) -> Result<(), HttpFailResult> {
@@ -144,57 +144,10 @@ pub fn validate_date_of_optional(
     }
 }
 
-pub fn validate_date_of_birth_optional(
-    _ctx: &HttpContext,
-    value: &DateTimeAsMicroseconds,
-) -> Result<(), HttpFailResult> {
-    let now = DateTimeAsMicroseconds::now();
-    let diff = now.duration_since(*value);
-
-    match diff {
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Positive(x) => {
-            // turn secunds to years
-            let x = f64::floor(x.as_secs_f64() / 60.0 / 60.0 / 24.0 / 365.0 * 100.0) / 100.0;
-            if x < 18.0 {
-                return Err(HttpFailResult::as_validation_error(
-                    "Should be older than 18".to_string(),
-                ));
-            }
-
-            return Ok(());
-        }
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Negative(_) => {}
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Zero => {}
-    }
-
-    return Err(HttpFailResult::as_validation_error(
-        "Should be older than 18".to_string(),
-    ));
-}
-
-/*
- Impleent for optional
-    Address
-
-    max - 50 characters; 
-
-    not empty;
-
-    City
-
-    max - 50 characters; 
-
-    not empty;
-
-    ZIP code
-
-    max - 10 characters; 
-
-    not empty;
-
-*/
-
-pub fn validate_address_optional(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_address_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+    let Some(value) = value else {
+        return Ok(());
+    };
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
             "Max length is 50 symbols".to_string(),
@@ -210,7 +163,11 @@ pub fn validate_address_optional(_ctx: &HttpContext, value: &str) -> Result<(), 
     return Ok(());
 }
 
-pub fn validate_city_optional(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_city_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+    let Some(value) = value else {
+        return Ok(());
+    };
+
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
             "Max length is 50 symbols".to_string(),
@@ -226,7 +183,11 @@ pub fn validate_city_optional(_ctx: &HttpContext, value: &str) -> Result<(), Htt
     return Ok(());
 }
 
-pub fn validate_zip_code_optional(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_zip_code_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+    let Some(value) = value else {
+        return Ok(());
+    };
+    
     if !validate_max(value, 10) {
         return Err(HttpFailResult::as_validation_error(
             "Max length is 10 symbols".to_string(),
