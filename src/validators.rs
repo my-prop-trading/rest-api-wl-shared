@@ -38,9 +38,27 @@ pub fn validate_email_optional(
 pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     match validate_password_text(value) {
         Ok(_) => {
-            if !validate_latin_letters_only(value) {
+            if !validate_min(value, 8) {
                 return Err(HttpFailResult::as_validation_error(
-                    "Only latin letters are allowed".to_string(),
+                    "Min length is 8 symbols".to_string(),
+                ));
+            }
+
+            if !validate_max(value, 50) {
+                return Err(HttpFailResult::as_validation_error(
+                    "Max length is 32 symbols".to_string(),
+                ));
+            }
+
+            if !validate_no_trimm_spaces(value) {
+                return Err(HttpFailResult::as_validation_error(
+                    "Should not start or end with space".to_string(),
+                ));
+            }
+
+            if !validate_no_cyrillic(value) {
+                return Err(HttpFailResult::as_validation_error(
+                    "No cyrillic letters are allowed".to_string(),
                 ));
             }
             Ok(())
@@ -144,7 +162,10 @@ pub fn validate_date_of_birth_optional(
     }
 }
 
-pub fn validate_address_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+pub fn validate_address_optional(
+    _ctx: &HttpContext,
+    value: &Option<String>,
+) -> Result<(), HttpFailResult> {
     let Some(value) = value else {
         return Ok(());
     };
@@ -163,7 +184,10 @@ pub fn validate_address_optional(_ctx: &HttpContext, value: &Option<String>) -> 
     return Ok(());
 }
 
-pub fn validate_city_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+pub fn validate_city_optional(
+    _ctx: &HttpContext,
+    value: &Option<String>,
+) -> Result<(), HttpFailResult> {
     let Some(value) = value else {
         return Ok(());
     };
@@ -183,11 +207,14 @@ pub fn validate_city_optional(_ctx: &HttpContext, value: &Option<String>) -> Res
     return Ok(());
 }
 
-pub fn validate_zip_code_optional(_ctx: &HttpContext, value: &Option<String>) -> Result<(), HttpFailResult> {
+pub fn validate_zip_code_optional(
+    _ctx: &HttpContext,
+    value: &Option<String>,
+) -> Result<(), HttpFailResult> {
     let Some(value) = value else {
         return Ok(());
     };
-    
+
     if !validate_max(value, 10) {
         return Err(HttpFailResult::as_validation_error(
             "Max length is 10 symbols".to_string(),
@@ -205,6 +232,21 @@ pub fn validate_zip_code_optional(_ctx: &HttpContext, value: &Option<String>) ->
 
 fn validate_latin_letters_only(src: &str) -> bool {
     regex::Regex::new(r"^[a-zA-Z\-]*$").unwrap().is_match(src)
+}
+
+fn validate_no_cyrillic(src: &str) -> bool {
+    src.chars().all(|c| !is_cyrillic(c))
+}
+
+fn is_cyrillic(c: char) -> bool {
+    ('\u{0400}'..='\u{04FF}').contains(&c) || 
+    ('\u{0500}'..='\u{052F}').contains(&c) ||
+    ('\u{2DE0}'..='\u{2DFF}').contains(&c) ||
+    ('\u{A640}'..='\u{A69F}').contains(&c)
+}
+
+fn validate_no_trimm_spaces(src: &str) -> bool {
+    !src.starts_with(" ") && !src.ends_with(" ")
 }
 
 pub fn validate_non_empty_text(src: &str) -> bool {
