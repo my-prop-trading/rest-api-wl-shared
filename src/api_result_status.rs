@@ -72,6 +72,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-50"; description="NotAuthorized")]
     NotAuthorized = -50,
 
+    #[http_enum_case(id="-51"; description="RefreshTokenExpired")]
+    RefreshTokenExpired = -51,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -109,6 +112,7 @@ impl ApiResultStatus {
             ApiResultStatus::UserHasOpenPositions => 400,
             ApiResultStatus::BrandIsNotSetUp => 500,
             ApiResultStatus::PasswordWasUsedBefore => 400,
+            ApiResultStatus::RefreshTokenExpired => 400,
         }
     }
 }
