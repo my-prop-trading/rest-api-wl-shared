@@ -97,13 +97,13 @@ pub fn validate_phone_optional(
 pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_latin_letters_only(value) {
         return Err(HttpFailResult::as_validation_error(
-            "Only latin letters are allowed".to_string(),
+            "Name: Only latin letters are allowed".to_string(),
         ));
     }
 
     if !validate_max(value, 32) {
         return Err(HttpFailResult::as_validation_error(
-            "Max length is 32 symbols".to_string(),
+            "Name: Max length is 32 symbols".to_string(),
         ));
     }
 
@@ -135,7 +135,7 @@ pub fn validate_date_of_birth(
             let x = x.as_secs() / 60 / 60 / 24 / 365;
             if x < 18 {
                 return Err(HttpFailResult::as_validation_error(
-                    "Should be older than 18".to_string(),
+                    "DateOfBirth: Should be older than 18".to_string(),
                 ));
             }
 
@@ -146,7 +146,7 @@ pub fn validate_date_of_birth(
     }
 
     return Err(HttpFailResult::as_validation_error(
-        "Should be older than 18".to_string(),
+        "DateOfBirth: Should be older than 18".to_string(),
     ));
 }
 
@@ -171,13 +171,13 @@ pub fn validate_address_optional(
     };
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
-            "Max length is 50 symbols".to_string(),
+            "Address: Max length is 50 symbols".to_string(),
         ));
     }
 
     if !validate_non_empty_text(value) {
         return Err(HttpFailResult::as_validation_error(
-            "Should not be empty".to_string(),
+            "Address: Should not be empty".to_string(),
         ));
     }
 
@@ -194,13 +194,13 @@ pub fn validate_city_optional(
 
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
-            "Max length is 50 symbols".to_string(),
+            "City: Max length is 50 symbols".to_string(),
         ));
     }
 
     if !validate_non_empty_text(value) {
         return Err(HttpFailResult::as_validation_error(
-            "Should not be empty".to_string(),
+            "City: Should not be empty".to_string(),
         ));
     }
 
@@ -217,13 +217,13 @@ pub fn validate_zip_code_optional(
 
     if !validate_max(value, 10) {
         return Err(HttpFailResult::as_validation_error(
-            "Max length is 10 symbols".to_string(),
+            "ZipCode: Max length is 10 symbols".to_string(),
         ));
     }
 
     if !validate_non_empty_text(value) {
         return Err(HttpFailResult::as_validation_error(
-            "Should not be empty".to_string(),
+            "ZipCode: Should not be empty".to_string(),
         ));
     }
 

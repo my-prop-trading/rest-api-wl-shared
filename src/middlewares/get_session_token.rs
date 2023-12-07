@@ -52,3 +52,49 @@ fn extract_token(src: &[u8]) -> Option<&[u8]> {
     }
     Some(src)
 }
+
+
+/* #[cfg(test)]
+mod tests {
+    use service_sdk::{
+        flurl::hyper::{header::HeaderValue, Request, body::Body},
+        my_http_server::{HttpContext, HttpRequest},
+    };
+    use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
+
+    use crate::middlewares::GetSessionApiKey;
+
+    use super::GetSessionToken;
+
+    #[test]
+    fn test_get_session_token() {
+        let body = Body::empty();
+        let mut body = Request::<Body>::new(body);
+        body.headers_mut().append(
+            super::AUTH_HEADER,
+            HeaderValue::from_str("Bearer 1234567890").unwrap(),
+        );
+        let addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 5000));
+        let http_req = HttpRequest::new(body, addr);
+        let http_ctx = HttpContext::new(http_req);
+        let session_token = http_ctx.get_session_token().unwrap();
+        
+        assert_eq!("1234567890", session_token);
+    }
+
+    #[test]
+    fn test_get_session_api_key() {
+        let body = Body::empty();
+        let mut body = Request::<Body>::new(body);
+        body.headers_mut().append(
+            super::API_KEY_HEADER,
+            HeaderValue::from_str("1234567890").unwrap(),
+        );
+        let addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), 5000));
+        let http_req = HttpRequest::new(body, addr);
+        let http_ctx = HttpContext::new(http_req);
+        let session_token = http_ctx.get_session_api_key().unwrap();
+        
+        assert_eq!("1234567890", session_token);
+    }
+} */

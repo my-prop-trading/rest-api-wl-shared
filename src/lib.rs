@@ -4,6 +4,8 @@ pub mod middlewares;
 pub use api_result_status::*;
 pub use get_client_id::*;
 
+mod countries;
+pub use countries::*;
 
 mod validators;
 pub use validators::*;
