@@ -20,14 +20,17 @@ impl AuthErrorFactory for AuthErrorFactoryWl {
     }
 
     fn get_not_authorized(&self, claim_name: String) -> my_http_server::HttpFailResult {
-        let _content = AccessClaimRequired {
+        let content = AccessClaimRequired {
             result: ApiResultStatus::AccessClaimRequired,
             data: claim_name,
         };
+
+        let content = serde_json::to_string(&content).unwrap();
+
         my_http_server::HttpFailResult::new(
             WebContentType::Text,
-            401,
-            "Unauthenticated".as_bytes().to_vec(),
+            403,
+            content.into_bytes(),
             false,
             false,
         )
