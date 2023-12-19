@@ -180,13 +180,10 @@ pub fn validate_date_of_birth_optional(
     }
 }
 
-pub fn validate_address_optional(
+pub fn validate_address(
     _ctx: &HttpContext,
-    value: &Option<String>,
+    value: &str,
 ) -> Result<(), HttpFailResult> {
-    let Some(value) = value else {
-        return Ok(());
-    };
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
             "Address: Max length is 50 symbols".to_string(),
@@ -202,14 +199,21 @@ pub fn validate_address_optional(
     return Ok(());
 }
 
-pub fn validate_city_optional(
-    _ctx: &HttpContext,
+pub fn validate_address_optional(
+    ctx: &HttpContext,
     value: &Option<String>,
 ) -> Result<(), HttpFailResult> {
     let Some(value) = value else {
         return Ok(());
     };
 
+    return validate_address(ctx, value);
+}
+
+pub fn validate_city(
+    _ctx: &HttpContext,
+    value: &str,
+) -> Result<(), HttpFailResult> {
     if !validate_max(value, 50) {
         return Err(HttpFailResult::as_validation_error(
             "City: Max length is 50 symbols".to_string(),
@@ -225,14 +229,21 @@ pub fn validate_city_optional(
     return Ok(());
 }
 
-pub fn validate_zip_code_optional(
-    _ctx: &HttpContext,
+pub fn validate_city_optional(
+    ctx: &HttpContext,
     value: &Option<String>,
 ) -> Result<(), HttpFailResult> {
     let Some(value) = value else {
         return Ok(());
     };
 
+    return validate_city(ctx, value);
+}
+
+pub fn validate_zip_code(
+    _ctx: &HttpContext,
+    value: &str,
+) -> Result<(), HttpFailResult> {
     if !validate_max(value, 10) {
         return Err(HttpFailResult::as_validation_error(
             "ZipCode: Max length is 10 symbols".to_string(),
@@ -246,6 +257,17 @@ pub fn validate_zip_code_optional(
     }
 
     return Ok(());
+}
+
+pub fn validate_zip_code_optional(
+    ctx: &HttpContext,
+    value: &Option<String>,
+) -> Result<(), HttpFailResult> {
+    let Some(value) = value else {
+        return Ok(());
+    };
+
+    return validate_zip_code(ctx, value);
 }
 
 fn validate_latin_letters_only(src: &str) -> bool {
