@@ -14,13 +14,31 @@ pub fn validate_non_empty(_ctx: &HttpContext, value: &str) -> Result<(), HttpFai
 }
 
 pub fn validate_email(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    if validate_email_text(value) {
-        return Ok(());
+    if !validate_email_text(value) {
+        return Err(HttpFailResult::as_validation_error(
+            "Invalid Email format".to_string(),
+        ))
     }
 
-    Err(HttpFailResult::as_validation_error(
-        "Invalid Email format".to_string(),
-    ))
+    if !validate_max(value, 64) {
+        return Err(HttpFailResult::as_validation_error(
+            "Max length is 32 symbols".to_string(),
+        ));
+    }
+
+    if !validate_no_trimm_spaces(value) {
+        return Err(HttpFailResult::as_validation_error(
+            "Should not start or end with space".to_string(),
+        ));
+    }
+
+    if !validate_no_cyrillic(value) {
+        return Err(HttpFailResult::as_validation_error(
+            "No cyrillic letters are allowed".to_string(),
+        ));
+    }
+
+    return Ok(());
 }
 
 pub fn validate_email_optional(
