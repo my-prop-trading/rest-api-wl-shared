@@ -128,6 +128,22 @@ pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResu
     return Ok(());
 }
 
+pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+    if !validate_latin_letters_with_spaces(value) {
+        return Err(HttpFailResult::as_validation_error(
+            "Name: Only latin letters and spaces are allowed".to_string(),
+        ));
+    }
+
+    if !validate_max(value, 32) {
+        return Err(HttpFailResult::as_validation_error(
+            "Name: Max length is 32 symbols".to_string(),
+        ));
+    }
+
+    return Ok(());
+}
+
 pub fn validate_name_optional(
     _ctx: &HttpContext,
     value: &Option<String>,
@@ -274,6 +290,10 @@ fn validate_latin_letters_only(src: &str) -> bool {
     regex::Regex::new(r"^[a-zA-Z\-]*$").unwrap().is_match(src)
 }
 
+fn validate_latin_letters_with_spaces(src: &str) -> bool {
+    regex::Regex::new(r"^[a-zA-Z\-]+(\s+[a-zA-Z\-]+)*$").unwrap().is_match(src)
+}
+
 fn validate_no_cyrillic(src: &str) -> bool {
     src.chars().all(|c| !is_cyrillic(c))
 }
@@ -354,5 +374,16 @@ mod tests {
         assert_eq!(false, validate_email_text("test.tt@"));
 
         assert_eq!(false, validate_email_text(" test.tt@sss.tr"));
+    }
+
+
+    #[test]
+    fn validate_name_with_spaces_correct() {
+        assert!(validate_latin_letters_with_spaces("Jhon Do  Doo"));
+    }
+
+    #[test]
+    fn validate_name_with_spaces_failed() {
+        assert!(!validate_latin_letters_with_spaces("Jhon Doo  "));
     }
 }
