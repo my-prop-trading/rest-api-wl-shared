@@ -128,6 +128,18 @@ pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResu
     return Ok(());
 }
 
+pub fn validate_name_optional(
+    _ctx: &HttpContext,
+    value: &Option<String>,
+) -> Result<(), HttpFailResult> {
+    match value {
+        Some(value) => {
+            return validate_name(_ctx, value);
+        }
+        None => Ok(()),
+    }
+}
+
 pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_latin_letters_with_spaces(value) {
         return Err(HttpFailResult::as_validation_error(
@@ -144,13 +156,13 @@ pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), 
     return Ok(());
 }
 
-pub fn validate_name_optional(
+pub fn validate_name_with_spaces_optional(
     _ctx: &HttpContext,
     value: &Option<String>,
 ) -> Result<(), HttpFailResult> {
     match value {
         Some(value) => {
-            return validate_name(_ctx, value);
+            return validate_name_with_spaces(_ctx, value);
         }
         None => Ok(()),
     }
