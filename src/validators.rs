@@ -22,7 +22,7 @@ pub fn validate_email(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailRes
 
     if !validate_max(value, 64) {
         return Err(HttpFailResult::as_validation_error(
-            "Max length is 32 symbols".to_string(),
+            "Max length is 64 symbols".to_string(),
         ));
     }
 
@@ -64,7 +64,7 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
 
             if !validate_max(value, 50) {
                 return Err(HttpFailResult::as_validation_error(
-                    "Max length is 32 symbols".to_string(),
+                    "Max length is 50 symbols".to_string(),
                 ));
             }
 
