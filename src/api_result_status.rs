@@ -81,6 +81,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-70"; description="TraderIsNotVerified")]
     TraderIsNotVerified = -70,
 
+    #[http_enum_case(id="-71"; description="TraderIsAlreadyVerified")]
+    TraderIsAlreadyVerified = -71,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -121,6 +124,7 @@ impl ApiResultStatus {
             ApiResultStatus::RefreshTokenExpired => 400,
             ApiResultStatus::PayoutIsBlocked => 400,
             ApiResultStatus::TraderIsNotVerified => 403,
+            ApiResultStatus::TraderIsAlreadyVerified => 400,
         }
     }
 }
