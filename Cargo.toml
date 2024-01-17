@@ -17,6 +17,7 @@ service-sdk = { tag = "0.2.5", git = "https://github.com/MyJetTools/service-sdk.
 ] }
 
 regex = "1.5.4"
+phonenumber = "0.3"
 
 lazy_static = "*"
 serde = { version = "*", features = ["derive"] }

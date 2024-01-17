@@ -1,3 +1,6 @@
+use std::str::FromStr;
+
+use phonenumber::PhoneNumber;
 use service_sdk::{
     my_http_server::{HttpContext, HttpFailResult},
     rust_extensions::date_time::DateTimeAsMicroseconds,
@@ -86,11 +89,7 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
 }
 
 pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    if regex::Regex::new(
-        r"^\+?(\d{1,3})?[-. (]?(\d{1,4})?[)-. ]?(\d{1,4})[-. ]?(\d{1,4})[-. ]?(\d{1,9})$",
-    )
-    .unwrap()
-    .is_match(value)
+    if validate_phone_text(value)
     {
         return Ok(());
     }
@@ -110,6 +109,27 @@ pub fn validate_phone_optional(
         }
         None => Ok(()),
     }
+}
+
+fn validate_phone_text(value: &str) -> bool {
+    let number = PhoneNumber::from_str(value);
+
+    match number {
+        Ok(number) => {
+            return number.is_valid();
+        }
+        Err(_) => {
+            return false;
+        }
+        
+    }
+
+    //phonenumber::is_valid(number)
+    /* regex::Regex::new(
+        r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$",
+    )
+    .unwrap()
+    .is_match(value) */
 }
 
 pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
@@ -386,6 +406,15 @@ mod tests {
         assert_eq!(false, validate_email_text("test.tt@"));
 
         assert_eq!(false, validate_email_text(" test.tt@sss.tr"));
+    }
+
+    #[test]
+    fn validate_phone_is_correct() {
+        assert_eq!(true, validate_phone_text("+1-202-555-0173"));
+
+        assert_eq!(false, validate_phone_text("+359111"));
+
+        assert_eq!(false, validate_phone_text("1"));
     }
 
 
