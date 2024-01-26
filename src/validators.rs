@@ -6,39 +6,31 @@ use service_sdk::{
     rust_extensions::date_time::DateTimeAsMicroseconds,
 };
 
+use crate::{ApiHttpResultWithData, ApiResultStatus};
+
 pub fn validate_non_empty(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if validate_non_empty_text(value) {
         return Ok(());
     }
 
-    Err(HttpFailResult::as_validation_error(
-        "Should not be empty".to_string(),
-    ))
+    Err(create_fail_http_result("Should not be empty"))
 }
 
 pub fn validate_email(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_email_text(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "Invalid Email format".to_string(),
-        ))
+        return Err(create_fail_http_result("Invalid Email format"));
     }
 
     if !validate_max(value, 64) {
-        return Err(HttpFailResult::as_validation_error(
-            "Max length is 64 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("Max length is 64 symbols"));
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "Should not start or end with space".to_string(),
-        ));
+        return Err(create_fail_http_result("Should not start or end with space"));
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "No cyrillic letters are allowed".to_string(),
-        ));
+        return Err(create_fail_http_result("No cyrillic letters are allowed"));
     }
 
     return Ok(());
@@ -60,27 +52,19 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
     match validate_password_text(value) {
         Ok(_) => {
             if !validate_min(value, 8) {
-                return Err(HttpFailResult::as_validation_error(
-                    "Min length is 8 symbols".to_string(),
-                ));
+                return Err(create_fail_http_result("Min length is 8 symbols"));
             }
 
             if !validate_max(value, 50) {
-                return Err(HttpFailResult::as_validation_error(
-                    "Max length is 50 symbols".to_string(),
-                ));
+                return Err(create_fail_http_result("Max length is 50 symbols"));
             }
 
             if !validate_no_trimm_spaces(value) {
-                return Err(HttpFailResult::as_validation_error(
-                    "Should not start or end with space".to_string(),
-                ));
+                return Err(create_fail_http_result("Should not start or end with space"));
             }
 
             if !validate_no_cyrillic(value) {
-                return Err(HttpFailResult::as_validation_error(
-                    "No cyrillic letters are allowed".to_string(),
-                ));
+                return Err(create_fail_http_result("No cyrillic letters are allowed"));
             }
             Ok(())
         }
@@ -94,9 +78,7 @@ pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailRes
         return Ok(());
     }
 
-    Err(HttpFailResult::as_validation_error(
-        "Phone is not valid!".to_string(),
-    ))
+    Err(create_fail_http_result("Phone is not valid!"))
 }
 
 pub fn validate_phone_optional(
@@ -134,15 +116,11 @@ fn validate_phone_text(value: &str) -> bool {
 
 pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_latin_letters_only(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "Name: Only latin letters are allowed".to_string(),
-        ));
+        return Err(create_fail_http_result("Name: Only latin letters are allowed"));
     }
 
     if !validate_max(value, 32) {
-        return Err(HttpFailResult::as_validation_error(
-            "Name: Max length is 32 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("Name: Max length is 32 symbols"));
     }
 
     return Ok(());
@@ -162,15 +140,11 @@ pub fn validate_name_optional(
 
 pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_latin_letters_with_spaces(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "Name: Only latin letters and spaces are allowed".to_string(),
-        ));
+        return Err(create_fail_http_result("Name: Only latin letters and spaces are allowed"));
     }
 
     if !validate_max(value, 32) {
-        return Err(HttpFailResult::as_validation_error(
-            "Name: Max length is 32 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("Name: Max length is 32 symbols"));
     }
 
     return Ok(());
@@ -200,9 +174,7 @@ pub fn validate_date_of_birth(
             // turn secunds to years
             let x = x.as_secs() / 60 / 60 / 24 / 365;
             if x < 18 {
-                return Err(HttpFailResult::as_validation_error(
-                    "DateOfBirth: Should be older than 18".to_string(),
-                ));
+                return Err(create_fail_http_result("DateOfBirth: Should be older than 18"));
             }
 
             return Ok(());
@@ -211,9 +183,7 @@ pub fn validate_date_of_birth(
         service_sdk::rust_extensions::date_time::DateTimeDuration::Zero => {}
     }
 
-    return Err(HttpFailResult::as_validation_error(
-        "DateOfBirth: Should be older than 18".to_string(),
-    ));
+    return Err(create_fail_http_result("DateOfBirth: Should be older than 18"));
 }
 
 pub fn validate_date_of_birth_optional(
@@ -233,15 +203,11 @@ pub fn validate_address(
     value: &str,
 ) -> Result<(), HttpFailResult> {
     if !validate_max(value, 50) {
-        return Err(HttpFailResult::as_validation_error(
-            "Address: Max length is 50 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("Address: Max length is 50 symbols"));
     }
 
     if !validate_non_empty_text(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "Address: Should not be empty".to_string(),
-        ));
+        return Err(create_fail_http_result("Address: Should not be empty"));
     }
 
     return Ok(());
@@ -263,15 +229,11 @@ pub fn validate_city(
     value: &str,
 ) -> Result<(), HttpFailResult> {
     if !validate_max(value, 50) {
-        return Err(HttpFailResult::as_validation_error(
-            "City: Max length is 50 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("City: Max length is 50 symbols"));
     }
 
     if !validate_non_empty_text(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "City: Should not be empty".to_string(),
-        ));
+        return Err(create_fail_http_result("City: Should not be empty"));
     }
 
     return Ok(());
@@ -293,15 +255,11 @@ pub fn validate_zip_code(
     value: &str,
 ) -> Result<(), HttpFailResult> {
     if !validate_max(value, 10) {
-        return Err(HttpFailResult::as_validation_error(
-            "ZipCode: Max length is 10 symbols".to_string(),
-        ));
+        return Err(create_fail_http_result("ZipCode: Max length is 10 symbols"));
     }
 
     if !validate_non_empty_text(value) {
-        return Err(HttpFailResult::as_validation_error(
-            "ZipCode: Should not be empty".to_string(),
-        ));
+        return Err(create_fail_http_result("ZipCode: Should not be empty"));
     }
 
     return Ok(());
@@ -391,6 +349,19 @@ fn validate_password_text(value: &str) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+fn create_fail_http_result(error: &str) -> HttpFailResult {
+    HttpFailResult::new(
+        service_sdk::my_http_server::WebContentType::Json,
+        400,
+        serde_json::to_vec(&ApiHttpResultWithData::<String> {
+            result: ApiResultStatus::RequestIsNoValid,
+            data: Some(error.to_string()),
+        },).unwrap(),
+        true,
+        true,
+    )
 }
 
 #[cfg(test)]

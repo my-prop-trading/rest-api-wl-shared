@@ -90,6 +90,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
+    #[http_enum_case(id="-200"; description="RequestIsNoValid")]
+    RequestIsNoValid = -200,
+
     #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
     BrandIsNotSetUp = -900,
 
@@ -129,6 +132,7 @@ impl ApiResultStatus {
             ApiResultStatus::TraderIsNotVerified => 403,
             ApiResultStatus::TraderIsAlreadyVerified => 400,
             ApiResultStatus::InvalidCode => 400,
+            ApiResultStatus::RequestIsNoValid => 400,
         }
     }
 }
