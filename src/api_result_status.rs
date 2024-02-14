@@ -93,6 +93,12 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-200"; description="RequestIsNoValid")]
     RequestIsNoValid = -200,
 
+    #[http_enum_case(id="-201"; description="AmountExceedsMax")]
+    AmountExceedsMax = -201,
+
+    #[http_enum_case(id="-202"; description="AmountLessThanMin")]
+    AmountLessThanMin = -202,
+
     #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
     BrandIsNotSetUp = -900,
 
@@ -133,6 +139,8 @@ impl ApiResultStatus {
             ApiResultStatus::TraderIsAlreadyVerified => 400,
             ApiResultStatus::InvalidCode => 400,
             ApiResultStatus::RequestIsNoValid => 400,
+            ApiResultStatus::AmountExceedsMax => 400,
+            ApiResultStatus::AmountLessThanMin => 400,
         }
     }
 }
