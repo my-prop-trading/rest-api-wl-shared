@@ -144,7 +144,7 @@ impl ApiResultStatus {
             ApiResultStatus::RequestIsNoValid => 400,
             ApiResultStatus::AmountExceedsMax => 400,
             ApiResultStatus::AmountLessThanMin => 400,
-            ApiResultStatus::InvalidDiscountCode => 400,
+            ApiResultStatus::InvalidDiscountCode => 200,
         }
     }
 }
