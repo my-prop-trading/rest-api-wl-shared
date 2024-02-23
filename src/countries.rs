@@ -15,7 +15,6 @@ lazy_static! {
         }
         map
     };
-
     pub static ref ISO_2_TO_COUNTRY_CODES: HashMap<CountryCode, String> = {
         let pairs = get_country_pairs();
         let mut map = HashMap::new();
@@ -55,7 +54,7 @@ pub fn validate_country_optional(
     validate_country(_ctx, value)
 }
 
-fn get_country_pairs() -> [(&'static str, &'static str); 248] {
+fn get_country_pairs() -> [(&'static str, &'static str); 247] {
     [
         ("Afghanistan", "AF"),
         ("Åland Islands", "AX"),
@@ -107,11 +106,11 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Cocos (Keeling) Islands", "CC"),
         ("Colombia", "CO"),
         ("Comoros", "KM"),
-        ("Congo, Republic of the (Brazzaville)", "CG"),
-        ("Congo, the Democratic Republic of the (Kinshasa)", "CD"),
+        ("Congo, Republic of the", "CG"),
+        ("Congo, Democratic Republic of the", "CD"),
         ("Cook Islands", "CK"),
         ("Costa Rica", "CR"),
-        ("Côte d'Ivoire, Republic of", "CI"),
+        ("Côte d'Ivoire", "CI"),
         ("Croatia", "HR"),
         ("Cuba", "CU"),
         ("Curaçao", "CW"),
@@ -128,16 +127,16 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Eritrea", "ER"),
         ("Estonia", "EE"),
         ("Ethiopia", "ET"),
-        ("Falkland Islands (Islas Malvinas)", "FK"),
+        ("Falkland Islands (Malvinas)", "FK"),
         ("Faroe Islands", "FO"),
         ("Fiji", "FJ"),
         ("Finland", "FI"),
         ("France", "FR"),
         ("French Guiana", "GF"),
         ("French Polynesia", "PF"),
-        ("French Southern and Antarctic Lands", "TF"),
+        ("French Southern Territories", "TF"),
         ("Gabon", "GA"),
-        ("Gambia, The", "GM"),
+        ("Gambia", "GM"),
         ("Georgia", "GE"),
         ("Germany", "DE"),
         ("Ghana", "GH"),
@@ -154,7 +153,7 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Guyana", "GY"),
         ("Haiti", "HT"),
         ("Heard Island and McDonald Islands", "HM"),
-        ("Holy See (Vatican City)", "VA"),
+        ("Holy See (Vatican City State)", "VA"),
         ("Honduras", "HN"),
         ("Hong Kong", "HK"),
         ("Hungary", "HU"),
@@ -178,7 +177,7 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Korea, Republic of", "KR"),
         ("Kuwait", "KW"),
         ("Kyrgyzstan", "KG"),
-        ("Laos", "LA"),
+        ("Lao People's Democratic Republic", "LA"),
         ("Latvia", "LV"),
         ("Lebanon", "LB"),
         ("Lesotho", "LS"),
@@ -188,7 +187,7 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Lithuania", "LT"),
         ("Luxembourg", "LU"),
         ("Macao", "MO"),
-        ("Macedonia, Republic of", "MK"),
+        ("Macedonia, the former Yugoslav Republic of", "MK"),
         ("Madagascar", "MG"),
         ("Malawi", "MW"),
         ("Malaysia", "MY"),
@@ -202,7 +201,7 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Mayotte", "YT"),
         ("Mexico", "MX"),
         ("Micronesia, Federated States of", "FM"),
-        ("Moldova", "MD"),
+        ("Moldova, Republic of", "MD"),
         ("Monaco", "MC"),
         ("Mongolia", "MN"),
         ("Montenegro", "ME"),
@@ -245,7 +244,7 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Saint Helena, Ascension and Tristan da Cunha", "SH"),
         ("Saint Kitts and Nevis", "KN"),
         ("Saint Lucia", "LC"),
-        ("Saint Martin", "MF"),
+        ("Saint Martin (French part)", "MF"),
         ("Saint Pierre and Miquelon", "PM"),
         ("Saint Vincent and the Grenadines", "VC"),
         ("Samoa", "WS"),
@@ -263,21 +262,23 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Solomon Islands", "SB"),
         ("Somalia", "SO"),
         ("South Africa", "ZA"),
-        ("South Georgia and South Sandwich Islands", "GS"),
+        ("South Georgia and the South Sandwich Islands", "GS"),
         ("South Sudan", "SS"),
         ("Spain", "ES"),
         ("Sri Lanka", "LK"),
         ("Sudan", "SD"),
         ("Suriname", "SR"),
+        ("Svalbard and Jan Mayen", "SJ"),
         ("Swaziland", "SZ"),
         ("Sweden", "SE"),
         ("Switzerland", "CH"),
         ("Syrian Arab Republic", "SY"),
-        ("Taiwan", "TW"),
+        ("Taiwan, Province of China", "TW"),
         ("Tajikistan", "TJ"),
         ("Tanzania, United Republic of", "TZ"),
         ("Thailand", "TH"),
-        ("Timor-Leste", "TL"),
+        // Wait for it to be added in rust_common
+        //("Timor-Leste", "TL"),
         ("Togo", "TG"),
         ("Tokelau", "TK"),
         ("Tonga", "TO"),
@@ -297,8 +298,8 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
         ("Uzbekistan", "UZ"),
         ("Vanuatu", "VU"),
         ("Venezuela, Bolivarian Republic of", "VE"),
-        ("Vietnam", "VN"),
-        ("Virgin Islands, British", "VG"),
+        ("Viet Nam", "VN"),
+        //("Virgin Islands, British", "VG"),
         ("Virgin Islands, U.S.", "VI"),
         ("Wallis and Futuna", "WF"),
         ("Western Sahara", "EH"),
@@ -308,32 +309,17 @@ fn get_country_pairs() -> [(&'static str, &'static str); 248] {
     ]
 }
 
-/* #[cfg(test)]
+#[cfg(test)]
 mod test {
-    use super::validate_country;
-    use service_sdk::{
-        flurl::hyper::{self, Method},
-        my_http_server::{HttpContext, HttpFailResult, HttpPath, HttpRequest, RequestData},
-    };
-    use std::{
-        collections::HashMap,
-        net::{Ipv4Addr, SocketAddrV4},
-    };
 
     #[test]
-    pub fn test_validate_country() {
-        let req: HttpRequest = HttpRequest {
-            data: RequestData:: ,
-            addr: std::net::SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), 8080)),
-            content_type_header: None,
-            method: Method::GET,
-            http_path: HttpPath::from_str("/"),
-            key_values: None,
-        };
-        let mut ctx = HttpContext::new(req);
-
-        let result = validate_country(&ctx, &"United States of Bitcoin".to_string());
-        assert!(!result.is_ok());
+    pub fn test_country() {
+        let code = super::COUNTRY_NAME_TO_ISO_2
+            .get("Afghanistan")
+            .unwrap()
+            .to_owned();
+        let x = super::ISO_2_TO_COUNTRY_CODES.get(&code).unwrap();
+        assert_eq!(code, rust_common::country_code::CountryCode::AFG);
+        assert_eq!(x, "Afghanistan");
     }
 }
- */
