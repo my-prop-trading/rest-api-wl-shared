@@ -16,6 +16,8 @@ service-sdk = { tag = "0.2.5", git = "https://github.com/MyJetTools/service-sdk.
     "my-nosql-sdk",
 ] }
 
+rust-common = { tag="0.1.1", git = "https://github.com/MyJetTools/rust-common", features = ["country-code"] }
+
 regex = "1.5.4"
 phonenumber = "0.3"
 
