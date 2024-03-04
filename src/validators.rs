@@ -351,7 +351,7 @@ fn validate_password_text(value: &str) -> Result<(), String> {
     Ok(())
 }
 
-fn create_fail_http_result(error: &str) -> HttpFailResult {
+pub fn create_fail_http_result(error: &str) -> HttpFailResult {
     HttpFailResult::new(
         service_sdk::my_http_server::WebContentType::Json,
         400,
