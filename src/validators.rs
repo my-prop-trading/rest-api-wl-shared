@@ -276,15 +276,15 @@ pub fn validate_zip_code_optional(
     return validate_zip_code(ctx, value);
 }
 
-fn validate_latin_letters_only(src: &str) -> bool {
+pub fn validate_latin_letters_only(src: &str) -> bool {
     regex::Regex::new(r"^[a-zA-Z\-]*$").unwrap().is_match(src)
 }
 
-fn validate_latin_letters_with_spaces(src: &str) -> bool {
+pub fn validate_latin_letters_with_spaces(src: &str) -> bool {
     regex::Regex::new(r"^[a-zA-Z\-]+(\s+[a-zA-Z\-]+)*$").unwrap().is_match(src)
 }
 
-fn validate_no_cyrillic(src: &str) -> bool {
+pub fn validate_no_cyrillic(src: &str) -> bool {
     src.chars().all(|c| !is_cyrillic(c))
 }
 
@@ -295,7 +295,7 @@ fn is_cyrillic(c: char) -> bool {
     ('\u{A640}'..='\u{A69F}').contains(&c)
 }
 
-fn validate_no_trimm_spaces(src: &str) -> bool {
+pub fn validate_no_trimm_spaces(src: &str) -> bool {
     !src.starts_with(" ") && !src.ends_with(" ")
 }
 
