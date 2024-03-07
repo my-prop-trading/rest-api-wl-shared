@@ -90,6 +90,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-73"; description="InvalidDiscountCode")]
     InvalidDiscountCode = -73,
 
+    #[http_enum_case(id="-74"; description="DiscountCodeUsageExceeded")]
+    DiscountCodeUsageExceeded = -74,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -145,6 +148,7 @@ impl ApiResultStatus {
             ApiResultStatus::AmountExceedsMax => 400,
             ApiResultStatus::AmountLessThanMin => 400,
             ApiResultStatus::InvalidDiscountCode => 200,
+            ApiResultStatus::DiscountCodeUsageExceeded => 400,
         }
     }
 }
