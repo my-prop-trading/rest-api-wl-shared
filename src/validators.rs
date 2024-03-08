@@ -105,22 +105,19 @@ fn validate_phone_text(value: &str) -> bool {
         }
         
     }
-
-    //phonenumber::is_valid(number)
-    /* regex::Regex::new(
-        r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$",
-    )
-    .unwrap()
-    .is_match(value) */
 }
 
 pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    if !validate_latin_letters_only(value) {
+    if !validate_latin_letters_with_spaces(value) {
         return Err(create_fail_http_result("Name: Only latin letters are allowed"));
     }
 
     if !validate_max(value, 32) {
         return Err(create_fail_http_result("Name: Max length is 32 symbols"));
+    }
+
+    if !validate_no_trimm_spaces(value) {
+        return Err(create_fail_http_result("Should not start or end with space"));
     }
 
     return Ok(());
@@ -210,6 +207,10 @@ pub fn validate_address(
         return Err(create_fail_http_result("Address: Should not be empty"));
     }
 
+    if !validate_no_cyrillic(value) {
+        return Err(create_fail_http_result("Address: No cyrillic letters are allowed"));
+    }
+
     return Ok(());
 }
 
@@ -236,6 +237,10 @@ pub fn validate_city(
         return Err(create_fail_http_result("City: Should not be empty"));
     }
 
+    if !validate_no_cyrillic(value) {
+        return Err(create_fail_http_result("City: No cyrillic letters are allowed"));
+    }
+
     return Ok(());
 }
 
@@ -260,6 +265,12 @@ pub fn validate_zip_code(
 
     if !validate_non_empty_text(value) {
         return Err(create_fail_http_result("ZipCode: Should not be empty"));
+    }
+
+
+
+    if !validate_no_cyrillic(value) {
+        return Err(create_fail_http_result("ZipCode: No cyrillic letters are allowed"));
     }
 
     return Ok(());
