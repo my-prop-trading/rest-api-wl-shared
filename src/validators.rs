@@ -73,6 +73,14 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
 }
 
 pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+    if !validate_non_empty_text(value) {
+        return Err(create_fail_http_result("Phone: Should not be empty"));
+    }
+
+    if !validate_no_trimm_spaces(value) {
+        return Err(create_fail_http_result("Phone: Should not start or end with space"));
+    }
+
     if validate_phone_text(value)
     {
         return Ok(());
@@ -207,6 +215,10 @@ pub fn validate_address(
         return Err(create_fail_http_result("Address: Should not be empty"));
     }
 
+    if !validate_no_trimm_spaces(value) {
+        return Err(create_fail_http_result("Address: Should not start or end with space"));
+    }
+
     if !validate_no_cyrillic(value) {
         return Err(create_fail_http_result("Address: No cyrillic letters are allowed"));
     }
@@ -235,6 +247,10 @@ pub fn validate_city(
 
     if !validate_non_empty_text(value) {
         return Err(create_fail_http_result("City: Should not be empty"));
+    }
+
+    if !validate_no_trimm_spaces(value) {
+        return Err(create_fail_http_result("City: Should not start or end with space"));
     }
 
     if !validate_no_cyrillic(value) {
@@ -267,7 +283,9 @@ pub fn validate_zip_code(
         return Err(create_fail_http_result("ZipCode: Should not be empty"));
     }
 
-
+    if !validate_no_trimm_spaces(value) {
+        return Err(create_fail_http_result("ZipCode: Should not start or end with space"));
+    }
 
     if !validate_no_cyrillic(value) {
         return Err(create_fail_http_result("ZipCode: No cyrillic letters are allowed"));
