@@ -116,16 +116,16 @@ fn validate_phone_text(value: &str) -> bool {
 }
 
 pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    if !validate_latin_letters_with_spaces(value) {
-        return Err(create_fail_http_result("Name: Only latin letters are allowed"));
-    }
-
     if !validate_max(value, 32) {
         return Err(create_fail_http_result("Name: Max length is 32 symbols"));
     }
 
     if !validate_no_trimm_spaces(value) {
         return Err(create_fail_http_result("Should not start or end with space"));
+    }
+    
+    if !validate_latin_letters_with_spaces(value) {
+        return Err(create_fail_http_result("Name: Only latin letters are allowed"));
     }
 
     return Ok(());
