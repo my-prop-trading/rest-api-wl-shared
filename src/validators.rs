@@ -169,10 +169,15 @@ pub fn validate_name_with_spaces_optional(
 
 pub fn validate_date_of_birth(
     _ctx: &HttpContext,
-    value: &DateTimeAsMicroseconds,
+    value: &str,
 ) -> Result<(), HttpFailResult> {
+    let value = match DateTimeAsMicroseconds::from_str(value) {
+        Some(x) => x,
+        None => return Err(create_fail_http_result("DateOfBirth: Not a valid date!")),
+    };
+
     let now = DateTimeAsMicroseconds::now();
-    let diff = now.duration_since(*value);
+    let diff = now.duration_since(value);
 
     match diff {
         service_sdk::rust_extensions::date_time::DateTimeDuration::Positive(x) => {
@@ -193,7 +198,7 @@ pub fn validate_date_of_birth(
 
 pub fn validate_date_of_birth_optional(
     _ctx: &HttpContext,
-    value: &Option<DateTimeAsMicroseconds>,
+    value: &Option<String>,
 ) -> Result<(), HttpFailResult> {
     match value {
         Some(value) => {
