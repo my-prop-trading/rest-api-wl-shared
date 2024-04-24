@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use phonenumber::PhoneNumber;
+use regex::Regex;
 use service_sdk::{
     my_http_server::{HttpContext, HttpFailResult},
     rust_extensions::date_time::DateTimeAsMicroseconds,
@@ -51,12 +52,12 @@ pub fn validate_email_optional(
 pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     match validate_password_text(value) {
         Ok(_) => {
-            if !validate_min(value, 8) {
-                return Err(create_fail_http_result("Min length is 8 symbols"));
+            if !validate_min(value, 12) {
+                return Err(create_fail_http_result("Min length is 12 symbols"));
             }
 
-            if !validate_max(value, 50) {
-                return Err(create_fail_http_result("Max length is 50 symbols"));
+            if !validate_max(value, 25) {
+                return Err(create_fail_http_result("Max length is 25 symbols"));
             }
 
             if !validate_no_trimm_spaces(value) {
@@ -351,11 +352,15 @@ fn validate_email_text(src: &str) -> bool {
         .is_match(src)
 }
 
+
 const SPECIAL_SYMBOLS: [char; 13] = [
     '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=',
 ];
 
 fn validate_password_text(value: &str) -> Result<(), String> {
+    let has_letter = Regex::new(r"[a-zA-Z]").unwrap();
+    let has_number = Regex::new(r"\d").unwrap();
+    
     let mut amount_of_special_symbols = 0;
 
     let mut amount_of_spaces = 0;
@@ -363,6 +368,7 @@ fn validate_password_text(value: &str) -> Result<(), String> {
     for v in value.as_bytes() {
         if *v <= 32 {
             amount_of_spaces += 1;
+            break;
         }
         let found_it = SPECIAL_SYMBOLS.iter().find(|c| **c as u8 == *v);
 
@@ -379,6 +385,18 @@ fn validate_password_text(value: &str) -> Result<(), String> {
         return Err(format!(
             "Password must contain at least 1 special symbol such as {:?}",
             SPECIAL_SYMBOLS
+        ));
+    }
+
+    if !has_letter.is_match(value) {
+        return Err(format!(
+            "Password must contain at least 1 letter"
+        ));
+    }
+
+    if !has_number.is_match(value) {
+        return Err(format!(
+            "Password must contain at least 1 number"
         ));
     }
 
@@ -431,5 +449,20 @@ mod tests {
     #[test]
     fn validate_name_with_spaces_failed() {
         assert!(!validate_latin_letters_with_spaces("Jhon Doo  "));
+    }
+
+    #[test]
+    fn validate_password_correct() {
+        let res = validate_password_text("qwerty1234!@#$");
+        assert!(res.is_ok());  
+    }
+
+    #[test]
+    fn validate_password_failed() {
+        let res = validate_password_text("!@#$1");
+        assert!(res.is_err());  
+
+        let res = validate_password_text("!@#$a");
+        assert!(res.is_err());  
     }
 }
