@@ -1,7 +1,7 @@
 service_sdk::macros::use_my_http_server!();
 use my_http_server::HttpContext;
 
-pub const ACCEPT_LANGUAGE: &str = "ACCEPT-LANGUAGE";
+pub const ACCEPT_LANGUAGE: &str = "Accept-Language";
 
 pub trait GetAcceptLanguage {
     fn get_accept_language(&self) -> Option<Vec<String>>;
