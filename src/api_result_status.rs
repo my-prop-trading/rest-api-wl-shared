@@ -96,6 +96,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-75"; description="DiscountCodeExpired")]
     DiscountCodeExpired = -75,
 
+    #[http_enum_case(id="-80"; description="InvalidSiteLanguage")]
+    InvalidSiteLanguage = -80,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -153,6 +156,7 @@ impl ApiResultStatus {
             ApiResultStatus::InvalidDiscountCode => 200,
             ApiResultStatus::DiscountCodeUsageExceeded => 400,
             ApiResultStatus::DiscountCodeExpired => 400,
+            ApiResultStatus::InvalidSiteLanguage => 400,
         }
     }
 }
