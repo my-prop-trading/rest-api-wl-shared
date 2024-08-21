@@ -111,6 +111,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-202"; description="AmountLessThanMin")]
     AmountLessThanMin = -202,
 
+    #[http_enum_case(id="-800"; description="Google recaptcha: too many requests")]
+    TooManyRequests = -800,
+
     #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
     BrandIsNotSetUp = -900,
 
@@ -157,6 +160,7 @@ impl ApiResultStatus {
             ApiResultStatus::DiscountCodeUsageExceeded => 400,
             ApiResultStatus::DiscountCodeExpired => 400,
             ApiResultStatus::InvalidSiteLanguage => 400,
+            ApiResultStatus::TooManyRequests => 200,
         }
     }
 }
