@@ -111,8 +111,11 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-202"; description="AmountLessThanMin")]
     AmountLessThanMin = -202,
 
-    #[http_enum_case(id="-800"; description="Google recaptcha: too many requests")]
-    TooManyRequests = -800,
+    #[http_enum_case(id="-800"; description="Google recaptcha failed: too many requests")]
+    RecaptchaVerificationIsFailed = -800,
+
+    #[http_enum_case(id="-800"; description="Google recaptcha is required")]
+    RecaptchaIsRequired = -801,
 
     #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
     BrandIsNotSetUp = -900,
