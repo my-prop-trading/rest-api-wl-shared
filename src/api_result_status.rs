@@ -163,7 +163,8 @@ impl ApiResultStatus {
             ApiResultStatus::DiscountCodeUsageExceeded => 400,
             ApiResultStatus::DiscountCodeExpired => 400,
             ApiResultStatus::InvalidSiteLanguage => 400,
-            ApiResultStatus::TooManyRequests => 200,
+            ApiResultStatus::RecaptchaIsRequired => 200,
+            ApiResultStatus::RecaptchaVerificationIsFailed => 200,
         }
     }
 }
