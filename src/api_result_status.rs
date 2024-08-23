@@ -196,6 +196,7 @@ impl Into<HttpFailResult> for ApiResultStatus {
 #[derive(Serialize, MyHttpObjectStructure)]
 pub struct ApiHttpResultWithData<TData: Serialize + DataTypeProvider> {
     pub result: ApiResultStatus,
+    #[serde(skip_serializing_if = "Option::is_none")] 
     pub data: Option<TData>,
 }
 
