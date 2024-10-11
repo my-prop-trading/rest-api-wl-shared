@@ -1,9 +1,7 @@
 service_sdk::macros::use_my_http_server!();
 use std::sync::Arc;
 
-use my_http_server::{
-    HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware, HttpServerRequestFlow,
-};
+use my_http_server::{HttpContext, HttpFailResult, HttpOkResult, HttpServerMiddleware};
 use service_sdk::my_no_sql_sdk::reader::MyNoSqlDataReaderTcp;
 
 use crate::KV_BRAND_ID;
@@ -38,12 +36,11 @@ impl HttpServerMiddleware for AuthSessionMiddleware {
     async fn handle_request(
         &self,
         ctx: &mut HttpContext,
-        get_next: &mut HttpServerRequestFlow,
-    ) -> Result<HttpOkResult, HttpFailResult> {
+    ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         let session_token = ctx.get_session_token();
 
         if session_token.is_none() {
-            return get_next.next(ctx).await;
+            return None;
         }
 
         let session_id = session_token.unwrap();
@@ -54,7 +51,7 @@ impl HttpServerMiddleware for AuthSessionMiddleware {
             .await;
 
         if token_entity.is_none() {
-            return get_next.next(ctx).await;
+            return None;
         }
 
         let token_entity = token_entity.unwrap();
@@ -67,7 +64,7 @@ impl HttpServerMiddleware for AuthSessionMiddleware {
             token_entity,
         )));
 
-        get_next.next(ctx).await
+        None
     }
 }
 
@@ -76,12 +73,11 @@ impl HttpServerMiddleware for AuthApiKeyMiddleware {
     async fn handle_request(
         &self,
         ctx: &mut HttpContext,
-        get_next: &mut HttpServerRequestFlow,
-    ) -> Result<HttpOkResult, HttpFailResult> {
+    ) -> Option<Result<HttpOkResult, HttpFailResult>> {
         let session_token = ctx.get_session_api_key();
 
         if session_token.is_none() {
-            return get_next.next(ctx).await;
+            return None;
         }
 
         let session_id = session_token.unwrap();
@@ -92,7 +88,7 @@ impl HttpServerMiddleware for AuthApiKeyMiddleware {
             .await;
 
         if token_entity.is_none() {
-            return get_next.next(ctx).await;
+            return None;
         }
 
         let token_entity = token_entity.unwrap();
@@ -105,6 +101,6 @@ impl HttpServerMiddleware for AuthApiKeyMiddleware {
             token_entity,
         )));
 
-        get_next.next(ctx).await
+        None
     }
 }

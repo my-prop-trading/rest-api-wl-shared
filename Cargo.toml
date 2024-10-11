@@ -1,6 +1,6 @@
 [package]
 name = "rest-api-wl-shared"
-version = "0.5.0"
+version = "6.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,12 +11,14 @@ auth-middleware = ["service-sdk/my-nosql-data-reader-sdk"]
 
 
 [dependencies]
-service-sdk = { tag = "0.2.6", git = "https://github.com/MyJetTools/service-sdk.git", features = [
+service-sdk = { tag = "0.3.0", git = "https://github.com/MyJetTools/service-sdk.git", features = [
     "macros",
     "my-nosql-sdk",
 ] }
 
-rust-common = { tag="0.1.1", git = "https://github.com/MyJetTools/rust-common", features = ["country-code"] }
+rust-common = { tag = "0.1.1", git = "https://github.com/MyJetTools/rust-common", features = [
+    "country-code",
+] }
 
 regex = "1.5.4"
 phonenumber = "0.3"
