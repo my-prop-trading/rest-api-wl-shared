@@ -66,6 +66,11 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
             if !validate_no_cyrillic(value) {
                 return Err(create_fail_http_result("No cyrillic letters are allowed"));
             }
+
+            if !contains_upper_letter(value) {
+                return Err(create_fail_http_result("Must contain upper letter"));
+            }
+            
             Ok(())
         }
         Err(err_text) => Err(HttpFailResult::as_validation_error(err_text)),
@@ -320,6 +325,10 @@ pub fn validate_latin_letters_with_spaces(src: &str) -> bool {
 
 pub fn validate_no_cyrillic(src: &str) -> bool {
     src.chars().all(|c| !is_cyrillic(c))
+}
+
+pub fn contains_upper_letter(src: &str) -> bool {
+    src.chars().any(|c| c.is_uppercase())
 }
 
 fn is_cyrillic(c: char) -> bool {
