@@ -111,6 +111,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-202"; description="AmountLessThanMin")]
     AmountLessThanMin = -202,
 
+    #[http_enum_case(id="-300"; description="TradingPlatformIsNotValid")]
+    TradingPlatformIsNotValid = -300,
+
     #[http_enum_case(id="-800"; description="Google recaptcha failed: too many requests")]
     RecaptchaVerificationIsFailed = -800,
 
@@ -165,6 +168,7 @@ impl ApiResultStatus {
             ApiResultStatus::InvalidSiteLanguage => 400,
             ApiResultStatus::RecaptchaIsRequired => 200,
             ApiResultStatus::RecaptchaVerificationIsFailed => 200,
+            ApiResultStatus::TradingPlatformIsNotValid => 400,
         }
     }
 }
