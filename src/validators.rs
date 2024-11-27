@@ -429,8 +429,9 @@ mod tests {
         assert_eq!(false, validate_phone_text("+359111"));
 
         assert_eq!(false, validate_phone_text("1"));
+        assert_eq!(true, validate_phone_text("+55-99-7115-675-1"));
+        assert_eq!(false, validate_phone_text("+55-99-7115-675"));
     }
-
 
     #[test]
     fn validate_name_with_spaces_correct() {
