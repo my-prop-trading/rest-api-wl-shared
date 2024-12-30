@@ -12,3 +12,5 @@ pub use auth_failed::*;
 pub use get_session_token::*;
 pub use request_creds::*;
 pub use session_entity::*;
+mod get_cookie_parameter;
+pub use get_cookie_parameter::*;
