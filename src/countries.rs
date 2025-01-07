@@ -15,7 +15,8 @@ lazy_static! {
         }
         map
     };
-    pub static ref ISO_2_TO_COUNTRY_CODES: HashMap<CountryCode, String> = {
+
+    pub static ref ISO_2_TO_COUNTRY_NAME: HashMap<CountryCode, String> = {
         let pairs = get_country_pairs();
         let mut map = HashMap::new();
         for &(country, code) in pairs.iter() {
@@ -312,13 +313,13 @@ fn get_country_pairs() -> [(&'static str, &'static str); 247] {
 #[cfg(test)]
 mod test {
 
-    #[test]
-    pub fn test_country() {
+     #[test]
+    pub fn test_iso2_to_name() {
         let code = super::COUNTRY_NAME_TO_ISO_2
             .get("Afghanistan")
             .unwrap()
             .to_owned();
-        let x = super::ISO_2_TO_COUNTRY_CODES.get(&code).unwrap();
+        let x = super::ISO_2_TO_COUNTRY_NAME.get(&code).unwrap();
         assert_eq!(code, rust_common::country_code::CountryCode::AFG);
         assert_eq!(x, "Afghanistan");
     }

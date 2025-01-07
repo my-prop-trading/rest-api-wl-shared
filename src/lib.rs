@@ -16,6 +16,9 @@ pub use get_language::*;
 mod cookie;
 pub use cookie::*;
 
+mod header;
+pub use header::*;
+
 #[cfg(feature = "auth-middleware")]
 mod configure_rest_api_server;
 #[cfg(feature = "auth-middleware")]
