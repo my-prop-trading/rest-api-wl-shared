@@ -2,7 +2,7 @@ service_sdk::macros::use_my_http_server!();
 
 use std::sync::Arc;
 
-use my_http_server::{RequestCredentials, RequestClaim};
+use my_http_server::{RequestClaim, RequestCredentials};
 use service_sdk::rust_extensions::date_time::DateTimeAsMicroseconds;
 
 use super::SessionEntityTrait;
@@ -31,7 +31,7 @@ impl RequestCredentials for TradingPlatformRequestCredentials {
                 .iter()
                 .map(|c| {
                     let expires = DateTimeAsMicroseconds {
-                        unix_microseconds: c.expires * 1000,
+                        unix_microseconds: c.expires.to_i64() * 1000,
                     };
 
                     RequestClaim {

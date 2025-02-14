@@ -1,7 +1,7 @@
 service_sdk::macros::use_my_http_server!();
 
 use serde::{Deserialize, Serialize};
-use service_sdk::my_no_sql_sdk;
+use service_sdk::my_no_sql_sdk::{self, abstractions::Timestamp};
 
 pub const SESSION_PARTITION_KEY_VALUE: &str = "t";
 
@@ -22,7 +22,7 @@ pub struct SessionEntity {
     pub trader_id: String,
 
     #[serde(rename = "Expires")]
-    pub expires: String,
+    pub expires: Timestamp,
 
     #[serde(rename = "BrandId")]
     pub brand_id: String,
@@ -42,7 +42,7 @@ pub struct OpenApiKeyEntity {
     pub api_key_id: String,
 
     #[serde(rename = "Expires")]
-    pub expires: String,
+    pub expires: Timestamp,
 
     #[serde(rename = "BrandId")]
     pub brand_id: String,
@@ -58,9 +58,9 @@ pub struct OpenApiKeyEntity {
 pub struct AccessClaim {
     #[serde(rename = "Id")]
     pub id: String,
-    
+
     #[serde(rename = "Expires")]
-    pub expires: i64,
+    pub expires: Timestamp,
 }
 
 impl SessionEntity {
