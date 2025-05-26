@@ -49,32 +49,31 @@ pub fn validate_email_optional(
 }
 
 pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    match validate_password_text(value) {
-        Ok(_) => {
-            if !validate_min(value, 8) {
-                return Err(create_fail_http_result("Min length is 8 symbols"));
-            }
-
-            if !validate_max(value, 50) {
-                return Err(create_fail_http_result("Max length is 50 symbols"));
-            }
-
-            if !validate_no_trimm_spaces(value) {
-                return Err(create_fail_http_result("Should not start or end with space"));
-            }
-
-            if !validate_no_cyrillic(value) {
-                return Err(create_fail_http_result("No cyrillic letters are allowed"));
-            }
-
-            if !contains_upper_letter(value) {
-                return Err(create_fail_http_result("Must contain upper letter"));
-            }
-            
-            Ok(())
-        }
-        Err(err_text) => Err(HttpFailResult::as_validation_error(err_text)),
+    match validate_password_conditions(value) {
+        Ok(_) => Ok(()),
+        Err(err_msg) => Err(HttpFailResult::as_validation_error(err_msg)),
     }
+}
+
+pub fn validate_password_conditions(value: &str) -> Result<(), String> {
+
+    let checks: &[(fn(&str) -> bool, &str)] = &[
+        (|v| validate_min(v, 8), "Min length is 8 symbols"),
+        (|v| validate_max(v, 50), "Max length is 50 symbols"),
+        (validate_no_trimm_spaces, "Should not start or end with space"),
+        (validate_no_cyrillic, "No cyrillic letters are allowed"),
+        (contains_upper_letter, "Must contain upper letter"),
+        (contains_no_space_characters, "Password must contain no space characters"),
+        (contains_special_symbol, "Password must contain at least one special symbol"),
+    ];
+
+    for (check, message) in checks {
+        if !check(value) {
+            return Err(message.to_string());
+        }
+    }
+
+    Ok(())
 }
 
 pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
@@ -364,34 +363,16 @@ const SPECIAL_SYMBOLS: [char; 13] = [
     '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=',
 ];
 
-fn validate_password_text(value: &str) -> Result<(), String> {
-    let mut amount_of_special_symbols = 0;
 
-    let mut amount_of_spaces = 0;
+pub fn contains_no_space_characters(value: &str) -> bool {
+    !value.as_bytes().iter().any(|b| *b <= 32)
+}
 
-    for v in value.as_bytes() {
-        if *v <= 32 {
-            amount_of_spaces += 1;
-        }
-        let found_it = SPECIAL_SYMBOLS.iter().find(|c| **c as u8 == *v);
-
-        if found_it.is_some() {
-            amount_of_special_symbols += 1;
-        }
-    }
-
-    if amount_of_spaces > 0 {
-        return Err(format!("Password must contain no space characters"));
-    }
-
-    if amount_of_special_symbols == 0 {
-        return Err(format!(
-            "Password must contain at least 1 special symbol such as {:?}",
-            SPECIAL_SYMBOLS
-        ));
-    }
-
-    Ok(())
+pub fn contains_special_symbol(value: &str) -> bool {
+    value
+        .as_bytes()
+        .iter()
+        .any(|b| SPECIAL_SYMBOLS.iter().any(|c| *c as u8 == *b))
 }
 
 pub fn create_fail_http_result(error: &str) -> HttpFailResult {
@@ -441,5 +422,83 @@ mod tests {
     #[test]
     fn validate_name_with_spaces_failed() {
         assert!(!validate_latin_letters_with_spaces("Jhon Doo  "));
+    }
+
+    #[test]
+    fn valid_password_passes_all_checks() {
+        let password = "Valid123!";
+        let result = validate_password_conditions(password);
+        assert!(result.is_ok(), "Expected OK, got: {:?}", result);
+    }
+
+    #[test]
+    fn fails_on_too_short_password() {
+        let password = "V1!";
+        let result = validate_password_conditions(password);
+        assert_eq!(result, Err("Min length is 8 symbols".to_string()));
+    }
+
+    #[test]
+    fn fails_on_too_long_password() {
+        let password = "A".repeat(51) + "!";
+        let result = validate_password_conditions(&password);
+        assert_eq!(result, Err("Max length is 50 symbols".to_string()));
+    }
+
+    #[test]
+    fn fails_on_leading_or_trailing_space() {
+        let password = " Valid123!";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("Should not start or end with space".to_string())
+        );
+
+        let password = "Valid123! ";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("Should not start or end with space".to_string())
+        );
+    }
+
+    #[test]
+    fn fails_on_internal_space_character() {
+        let password = "Valid 123!";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("Password must contain no space characters".to_string())
+        );
+    }
+
+    #[test]
+    fn fails_on_cyrillic_letters() {
+        let password = "Вalid123!";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("No cyrillic letters are allowed".to_string())
+        );
+    }
+
+    #[test]
+    fn fails_without_uppercase_letter() {
+        let password = "valid123!";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("Must contain upper letter".to_string())
+        );
+    }
+
+    #[test]
+    fn fails_without_special_symbol() {
+        let password = "Valid123";
+        let result = validate_password_conditions(password);
+        assert_eq!(
+            result,
+            Err("Password must contain at least one special symbol".to_string())
+        );
     }
 }
