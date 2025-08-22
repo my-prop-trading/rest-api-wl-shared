@@ -51,11 +51,15 @@ impl GetHeader for HttpContext {
 }
 
 fn required_header_is_missing(param_name: String) -> HttpFailResult {
+    let output = HttpOutput::from_builder()
+        .set_status_code(400)
+        .set_content_type(WebContentType::Text)
+        .set_content(format!( "Required header [{}] is missing", param_name)
+            .into_bytes())
+        .build();
+    
     HttpFailResult {
-        content_type: WebContentType::Text,
-        content: format!( "Required header [{}] is missing", param_name)
-        .into_bytes(),
-        status_code: 400,
+        output,
         write_telemetry: true,
         write_to_log: false,
         add_telemetry_tags: my_telemetry::TelemetryEventTagsBuilder::new(),

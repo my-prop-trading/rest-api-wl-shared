@@ -192,10 +192,14 @@ impl Into<HttpFailResult> for ApiResultStatus {
     fn into(self) -> HttpFailResult {
         let status_code = self.get_status_code();
         let result = ApiHttpResult { result: self };
+        let output = HttpOutput::from_builder()
+            .set_status_code(status_code)
+            .set_content_type(WebContentType::Json)
+            .set_content(serde_json::to_vec(&result).unwrap(),
+            )
+            .build();
 
-        HttpFailResult::new(my_http_server::WebContentType::Json,
-            status_code,
-            serde_json::to_vec(&result).unwrap(),
+        HttpFailResult::new(output,
             false,
             false)
     }
@@ -211,10 +215,14 @@ pub struct ApiHttpResultWithData<TData: Serialize + DataTypeProvider> {
 impl<TData: Serialize + DataTypeProvider> Into<HttpFailResult> for ApiHttpResultWithData<TData> {
     fn into(self) -> HttpFailResult {
         let status_code = self.result.get_status_code();
-
-        HttpFailResult::new(my_http_server::WebContentType::Json,
-            status_code,
-            serde_json::to_vec(&self).unwrap(),
+        let output = HttpOutput::from_builder()
+            .set_status_code(status_code)
+            .set_content_type(WebContentType::Json)
+            .set_content(serde_json::to_vec(&self).unwrap(),
+            )
+            .build();
+        
+        HttpFailResult::new(output,
             false,
             false) 
     }

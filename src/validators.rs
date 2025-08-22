@@ -1,12 +1,11 @@
 use std::str::FromStr;
-
+use crate::{ApiHttpResultWithData, ApiResultStatus};
 use phonenumber::PhoneNumber;
+use service_sdk::my_http_server::{HttpOutput, WebContentType};
 use service_sdk::{
     my_http_server::{HttpContext, HttpFailResult},
     rust_extensions::date_time::DateTimeAsMicroseconds,
 };
-
-use crate::{ApiHttpResultWithData, ApiResultStatus};
 
 pub fn validate_non_empty(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if validate_non_empty_text(value) {
@@ -26,7 +25,9 @@ pub fn validate_email(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailRes
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "Should not start or end with space",
+        ));
     }
 
     if !validate_no_cyrillic(value) {
@@ -56,15 +57,23 @@ pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFail
 }
 
 pub fn validate_password_conditions(value: &str) -> Result<(), String> {
-
     let checks: &[(fn(&str) -> bool, &str)] = &[
         (|v| validate_min(v, 8), "Min length is 8 symbols"),
         (|v| validate_max(v, 50), "Max length is 50 symbols"),
-        (validate_no_trimm_spaces, "Should not start or end with space"),
+        (
+            validate_no_trimm_spaces,
+            "Should not start or end with space",
+        ),
         (validate_no_cyrillic, "No cyrillic letters are allowed"),
         (contains_upper_letter, "Must contain upper letter"),
-        (contains_no_space_characters, "Password must contain no space characters"),
-        (contains_special_symbol, "Password must contain at least one special symbol"),
+        (
+            contains_no_space_characters,
+            "Password must contain no space characters",
+        ),
+        (
+            contains_special_symbol,
+            "Password must contain at least one special symbol",
+        ),
     ];
 
     for (check, message) in checks {
@@ -82,11 +91,12 @@ pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailRes
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("Phone: Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "Phone: Should not start or end with space",
+        ));
     }
 
-    if validate_phone_text(value)
-    {
+    if validate_phone_text(value) {
         return Ok(());
     }
 
@@ -115,7 +125,6 @@ fn validate_phone_text(value: &str) -> bool {
         Err(_) => {
             return false;
         }
-        
     }
 }
 
@@ -125,11 +134,15 @@ pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResu
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "Should not start or end with space",
+        ));
     }
-    
+
     if !validate_latin_letters_with_spaces(value) {
-        return Err(create_fail_http_result("Name: Only latin letters are allowed"));
+        return Err(create_fail_http_result(
+            "Name: Only latin letters are allowed",
+        ));
     }
 
     return Ok(());
@@ -149,7 +162,9 @@ pub fn validate_name_optional(
 
 pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_latin_letters_with_spaces(value) {
-        return Err(create_fail_http_result("Name: Only latin letters and spaces are allowed"));
+        return Err(create_fail_http_result(
+            "Name: Only latin letters and spaces are allowed",
+        ));
     }
 
     if !validate_max(value, 32) {
@@ -171,10 +186,7 @@ pub fn validate_name_with_spaces_optional(
     }
 }
 
-pub fn validate_date_of_birth(
-    _ctx: &HttpContext,
-    value: &str,
-) -> Result<(), HttpFailResult> {
+pub fn validate_date_of_birth(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     let value = match DateTimeAsMicroseconds::from_str(value) {
         Some(x) => x,
         None => return Err(create_fail_http_result("DateOfBirth: Not a valid date!")),
@@ -188,7 +200,9 @@ pub fn validate_date_of_birth(
             // turn secunds to years
             let x = x.as_secs() / 60 / 60 / 24 / 365;
             if x < 18 {
-                return Err(create_fail_http_result("DateOfBirth: Should be older than 18"));
+                return Err(create_fail_http_result(
+                    "DateOfBirth: Should be older than 18",
+                ));
             }
 
             return Ok(());
@@ -197,7 +211,9 @@ pub fn validate_date_of_birth(
         service_sdk::rust_extensions::date_time::DateTimeDuration::Zero => {}
     }
 
-    return Err(create_fail_http_result("DateOfBirth: Should be older than 18"));
+    return Err(create_fail_http_result(
+        "DateOfBirth: Should be older than 18",
+    ));
 }
 
 pub fn validate_date_of_birth_optional(
@@ -212,10 +228,7 @@ pub fn validate_date_of_birth_optional(
     }
 }
 
-pub fn validate_address(
-    _ctx: &HttpContext,
-    value: &str,
-) -> Result<(), HttpFailResult> {
+pub fn validate_address(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_max(value, 50) {
         return Err(create_fail_http_result("Address: Max length is 50 symbols"));
     }
@@ -225,11 +238,15 @@ pub fn validate_address(
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("Address: Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "Address: Should not start or end with space",
+        ));
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result("Address: No cyrillic letters are allowed"));
+        return Err(create_fail_http_result(
+            "Address: No cyrillic letters are allowed",
+        ));
     }
 
     return Ok(());
@@ -246,10 +263,7 @@ pub fn validate_address_optional(
     return validate_address(ctx, value);
 }
 
-pub fn validate_city(
-    _ctx: &HttpContext,
-    value: &str,
-) -> Result<(), HttpFailResult> {
+pub fn validate_city(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_max(value, 50) {
         return Err(create_fail_http_result("City: Max length is 50 symbols"));
     }
@@ -259,11 +273,15 @@ pub fn validate_city(
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("City: Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "City: Should not start or end with space",
+        ));
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result("City: No cyrillic letters are allowed"));
+        return Err(create_fail_http_result(
+            "City: No cyrillic letters are allowed",
+        ));
     }
 
     return Ok(());
@@ -280,10 +298,7 @@ pub fn validate_city_optional(
     return validate_city(ctx, value);
 }
 
-pub fn validate_zip_code(
-    _ctx: &HttpContext,
-    value: &str,
-) -> Result<(), HttpFailResult> {
+pub fn validate_zip_code(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     if !validate_max(value, 10) {
         return Err(create_fail_http_result("ZipCode: Max length is 10 symbols"));
     }
@@ -293,11 +308,15 @@ pub fn validate_zip_code(
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result("ZipCode: Should not start or end with space"));
+        return Err(create_fail_http_result(
+            "ZipCode: Should not start or end with space",
+        ));
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result("ZipCode: No cyrillic letters are allowed"));
+        return Err(create_fail_http_result(
+            "ZipCode: No cyrillic letters are allowed",
+        ));
     }
 
     return Ok(());
@@ -319,7 +338,9 @@ pub fn validate_latin_letters_only(src: &str) -> bool {
 }
 
 pub fn validate_latin_letters_with_spaces(src: &str) -> bool {
-    regex::Regex::new(r"^[a-zA-Z\-]+(\s+[a-zA-Z\-]+)*$").unwrap().is_match(src)
+    regex::Regex::new(r"^[a-zA-Z\-]+(\s+[a-zA-Z\-]+)*$")
+        .unwrap()
+        .is_match(src)
 }
 
 pub fn validate_no_cyrillic(src: &str) -> bool {
@@ -331,10 +352,10 @@ pub fn contains_upper_letter(src: &str) -> bool {
 }
 
 fn is_cyrillic(c: char) -> bool {
-    ('\u{0400}'..='\u{04FF}').contains(&c) || 
-    ('\u{0500}'..='\u{052F}').contains(&c) ||
-    ('\u{2DE0}'..='\u{2DFF}').contains(&c) ||
-    ('\u{A640}'..='\u{A69F}').contains(&c)
+    ('\u{0400}'..='\u{04FF}').contains(&c)
+        || ('\u{0500}'..='\u{052F}').contains(&c)
+        || ('\u{2DE0}'..='\u{2DFF}').contains(&c)
+        || ('\u{A640}'..='\u{A69F}').contains(&c)
 }
 
 pub fn validate_no_trimm_spaces(src: &str) -> bool {
@@ -363,7 +384,6 @@ const SPECIAL_SYMBOLS: [char; 13] = [
     '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=',
 ];
 
-
 pub fn contains_no_space_characters(value: &str) -> bool {
     !value.as_bytes().iter().any(|b| *b <= 32)
 }
@@ -376,16 +396,19 @@ pub fn contains_special_symbol(value: &str) -> bool {
 }
 
 pub fn create_fail_http_result(error: &str) -> HttpFailResult {
-    HttpFailResult::new(
-        service_sdk::my_http_server::WebContentType::Json,
-        400,
-        serde_json::to_vec(&ApiHttpResultWithData::<String> {
-            result: ApiResultStatus::RequestIsNoValid,
-            data: Some(error.to_string()),
-        },).unwrap(),
-        true,
-        true,
-    )
+    let output = HttpOutput::from_builder()
+        .set_status_code(400)
+        .set_content_type(WebContentType::Json)
+        .set_content(
+            serde_json::to_vec(&ApiHttpResultWithData::<String> {
+                result: ApiResultStatus::RequestIsNoValid,
+                data: Some(error.to_string()),
+            })
+            .unwrap(),
+        )
+        .build();
+
+    HttpFailResult::new(output, true, true)
 }
 
 #[cfg(test)]
@@ -476,20 +499,14 @@ mod tests {
     fn fails_on_cyrillic_letters() {
         let password = "Вalid123!";
         let result = validate_password_conditions(password);
-        assert_eq!(
-            result,
-            Err("No cyrillic letters are allowed".to_string())
-        );
+        assert_eq!(result, Err("No cyrillic letters are allowed".to_string()));
     }
 
     #[test]
     fn fails_without_uppercase_letter() {
         let password = "valid123!";
         let result = validate_password_conditions(password);
-        assert_eq!(
-            result,
-            Err("Must contain upper letter".to_string())
-        );
+        assert_eq!(result, Err("Must contain upper letter".to_string()));
     }
 
     #[test]

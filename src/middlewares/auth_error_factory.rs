@@ -26,11 +26,13 @@ impl AuthErrorFactory for AuthErrorFactoryWl {
         };
 
         let content = serde_json::to_string(&content).unwrap();
-
+        let output = HttpOutput::from_builder()
+            .set_status_code(403)
+            .set_content_type(WebContentType::Json)
+            .set_content(content.into_bytes())
+            .build();
         my_http_server::HttpFailResult::new(
-            WebContentType::Json,
-            403,
-            content.into_bytes(),
+            output,
             false,
             false,
         )

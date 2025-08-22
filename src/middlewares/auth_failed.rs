@@ -28,9 +28,12 @@ impl AuthorizationFailedApiResponse {
         };
 
         let content = serde_json::to_vec(&result).unwrap();
-        HttpFailResult::new(my_http_server::WebContentType::Json,
-            401,
-            content,
+        let output = HttpOutput::from_builder()
+            .set_status_code(401)
+            .set_content_type(WebContentType::Json)
+            .set_content(content)
+            .build();
+        HttpFailResult::new(output,
             false,
             false)
     }
@@ -48,9 +51,12 @@ impl AuthenticationFailedApiResponse {
         };
 
         let content = serde_json::to_vec(&result).unwrap();
-        HttpFailResult::new (my_http_server::WebContentType::Json,
-            401,
-            content,
+        let output = HttpOutput::from_builder()
+            .set_status_code(401)
+            .set_content_type(WebContentType::Json)
+            .set_content(content)
+            .build();
+        HttpFailResult::new(output,
             false,
             false)
     }
