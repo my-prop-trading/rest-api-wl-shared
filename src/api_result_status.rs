@@ -96,7 +96,7 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-75"; description="DiscountCodeExpired")]
     DiscountCodeExpired = -75,
 
-    #[http_enum_case(id="-76"; description="Discount code for another package")]
+    #[http_enum_case(id="-76"; description="DiscountCodeForAnotherPackage")]
     DiscountCodeForAnotherPackage = -76,
 
     #[http_enum_case(id="-77"; description="DiscountCodeOnlyForFirstPayin")]
