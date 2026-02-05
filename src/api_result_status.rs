@@ -99,6 +99,12 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-76"; description="Discount code for another package")]
     DiscountCodeForAnotherPackage = -76,
 
+    #[http_enum_case(id="-77"; description="Discount code invalid for first apply")]
+    DiscountCodeForInvalidFirstApply= -77,
+
+    #[http_enum_case(id="-78"; description="Discount code invalid for next apply")]
+    DiscountCodeForInvalidNextApply = -78,
+
     #[http_enum_case(id="-80"; description="InvalidSiteLanguage")]
     InvalidSiteLanguage = -80,
 
@@ -173,6 +179,8 @@ impl ApiResultStatus {
             ApiResultStatus::RecaptchaIsRequired => 200,
             ApiResultStatus::RecaptchaVerificationIsFailed => 200,
             ApiResultStatus::TradingPlatformIsNotValid => 400,
+            ApiResultStatus::DiscountCodeForInvalidFirstApply => 200,
+            ApiResultStatus::DiscountCodeForInvalidNextApply => 200,
         }
     }
 }
