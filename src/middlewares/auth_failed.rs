@@ -1,8 +1,8 @@
 service_sdk::macros::use_my_http_server!();
-
 use crate::ApiResultStatus;
 use my_http_server::HttpFailResult;
 use serde::Serialize;
+use service_sdk::my_http_server::controllers::documentation::DataTypeProvider;
 
 #[derive(Serialize, Debug, MyHttpObjectStructure)]
 pub struct AuthenticationFailedApiResponse {
@@ -33,9 +33,7 @@ impl AuthorizationFailedApiResponse {
             .set_content_type(WebContentType::Json)
             .set_content(content)
             .build();
-        HttpFailResult::new(output,
-            false,
-            false)
+        HttpFailResult::new(output, false, false)
     }
 
     pub fn default_desc() -> String {
@@ -56,9 +54,7 @@ impl AuthenticationFailedApiResponse {
             .set_content_type(WebContentType::Json)
             .set_content(content)
             .build();
-        HttpFailResult::new(output,
-            false,
-            false)
+        HttpFailResult::new(output, false, false)
     }
 
     pub fn default_desc() -> String {
