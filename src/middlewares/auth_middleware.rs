@@ -47,8 +47,7 @@ impl HttpServerMiddleware for AuthSessionMiddleware {
 
         let token_entity = self
             .sessions_reader
-            .get_entity(&SessionEntity::get_pk(), session_id)
-            .await;
+            .get_entity(&SessionEntity::get_pk(), session_id);
 
         if token_entity.is_none() {
             return None;
@@ -84,8 +83,7 @@ impl HttpServerMiddleware for AuthApiKeyMiddleware {
 
         let token_entity = self
             .api_key_reader
-            .get_entity(&OpenApiKeyEntity::get_pk(), session_id)
-            .await;
+            .get_entity(&OpenApiKeyEntity::get_pk(), session_id);
 
         if token_entity.is_none() {
             return None;
