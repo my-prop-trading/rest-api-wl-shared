@@ -108,6 +108,21 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-80"; description="InvalidSiteLanguage")]
     InvalidSiteLanguage = -80,
 
+    #[http_enum_case(id="-90"; description="Competition not found")]
+    CompetitionNotFound = -90,
+
+    #[http_enum_case(id="-91"; description="Competition has ended")]
+    CompetitionEnded = -91,
+
+    #[http_enum_case(id="-92"; description="Competition registration is closed")]
+    CompetitionRegistrationClosed = -92,
+
+    #[http_enum_case(id="-93"; description="Competition is full")]
+    CompetitionFull = -93,
+
+    #[http_enum_case(id="-94"; description="Already enrolled in competition")]
+    CompetitionAlreadyEnrolled = -94,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -181,6 +196,11 @@ impl ApiResultStatus {
             ApiResultStatus::TradingPlatformIsNotValid => 400,
             ApiResultStatus::DiscountCodeOnlyForFirstPayin => 200,
             ApiResultStatus::DiscountCodeOnlyForNextPayin => 200,
+            ApiResultStatus::CompetitionNotFound => 400,
+            ApiResultStatus::CompetitionEnded => 400,
+            ApiResultStatus::CompetitionRegistrationClosed => 400,
+            ApiResultStatus::CompetitionFull => 400,
+            ApiResultStatus::CompetitionAlreadyEnrolled => 400,
         }
     }
 }
