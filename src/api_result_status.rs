@@ -123,6 +123,9 @@ pub enum ApiResultStatus {
     #[http_enum_case(id="-94"; description="Already enrolled in competition")]
     CompetitionAlreadyEnrolled = -94,
 
+    #[http_enum_case(id="-95"; description="Platform not allowed for this competition")]
+    CompetitionPlatformNotAllowed = -95,
+
     #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
@@ -201,6 +204,7 @@ impl ApiResultStatus {
             ApiResultStatus::CompetitionRegistrationClosed => 400,
             ApiResultStatus::CompetitionFull => 400,
             ApiResultStatus::CompetitionAlreadyEnrolled => 400,
+            ApiResultStatus::CompetitionPlatformNotAllowed => 400,
         }
     }
 }
