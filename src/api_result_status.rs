@@ -4,154 +4,376 @@ use my_http_server::HttpFailResult;
 use my_http_server::controllers::documentation::DataTypeProvider;
 use serde::Serialize;
 use serde_repr::*;
-use service_sdk::my_http_server::macros::{MyHttpIntegerEnum, MyHttpObjectStructure};
+use service_sdk::my_http_server::macros::MyHttpObjectStructure;
 
-#[derive(Serialize_repr, Deserialize_repr, MyHttpIntegerEnum, Debug, Clone, Copy)]
+// MyHttpIntegerEnum (my-http-server 0.9.0) generates its own serde impls that write the case
+// name as a string; that would change `result` from an integer to text for every API consumer.
+// serde_repr keeps the integer contract, and the impls below replace what the derive gave us.
+#[derive(Serialize_repr, Deserialize_repr, Debug, Clone, Copy)]
 #[repr(i16)]
 pub enum ApiResultStatus {
-    #[http_enum_case(id="0"; description="Operations was successful")]
     Ok,
 
-    #[http_enum_case(id="-1"; description="Invalid username or password")]
     InvalidUserNameOrPassword = -1,
 
-    #[http_enum_case(id="-2"; description="User exists")]
     UserExists = -2,
 
-    #[http_enum_case(id="-3"; description="User not found")]
     UserNotFound = -3,
 
-    #[http_enum_case(id="-4"; description="Old password is wrong")]
     OldPasswordIsWrong = -4,
 
-    #[http_enum_case(id="-5"; description="Wrong file extension")]
     WrongFileExtension = -5,
 
-    #[http_enum_case(id="-6"; description="File not found")]
     FileNotFound = -6,
 
-    #[http_enum_case(id="-7"; description="Personal data is not valid")]
     PersonalDataNotValid = -7,
 
-    #[http_enum_case(id="-8"; description="System error")]
     SystemError = -8,
 
-    #[http_enum_case(id="-9"; description="AccessTokenExpired")]
     AccessTokenExpired = -9,
 
-    #[http_enum_case(id="-10"; description="TechnicalError")]
     TechnicalError = -10,
 
-    #[http_enum_case(id="-11"; description="CountryRestriction")]
     CountryIsRestricted = -11,
 
-    #[http_enum_case(id="-17"; description="AccessTokenInvalid")]
     AccessTokenInvalid = -17,
 
-    #[http_enum_case(id="-18"; description="AccessClaimRequired")]
     AccessClaimRequired = -18,
 
-    #[http_enum_case(id="-19"; description="TraderPackageNotFound")]
     TraderPackageNotFound = -19,
 
-    #[http_enum_case(id="-20"; description="OrderNotFound")]
     OrderNotFound = -20,
 
-    #[http_enum_case(id="-21"; description="OrderNotPaid")]
     OrderNotPaid = -21,
 
-    #[http_enum_case(id="-22"; description="Password was used before")]
     PasswordWasUsedBefore = -22,
 
-    #[http_enum_case(id="-30"; description="InvalidCodeEntered")]
     InvalidCodeEntered = -30,
 
-    #[http_enum_case(id="-40"; description="NotEnoughBalance")]
     NotEnoughBalance = -40,
 
-    #[http_enum_case(id="-50"; description="NotAuthorized")]
     NotAuthorized = -50,
 
-    #[http_enum_case(id="-51"; description="RefreshTokenExpired")]
     RefreshTokenExpired = -51,
 
-    #[http_enum_case(id="-60"; description="PayoutIsBlocked")]
     PayoutIsBlocked = -60,
 
-    #[http_enum_case(id="-70"; description="TraderIsNotVerified")]
     TraderIsNotVerified = -70,
 
-    #[http_enum_case(id="-71"; description="TraderIsAlreadyVerified")]
     TraderIsAlreadyVerified = -71,
 
-    #[http_enum_case(id="-72"; description="InvalidCode")]
     InvalidCode = -72,
 
-    #[http_enum_case(id="-73"; description="InvalidDiscountCode")]
     InvalidDiscountCode = -73,
 
-    #[http_enum_case(id="-74"; description="DiscountCodeUsageExceeded")]
     DiscountCodeUsageExceeded = -74,
 
-    #[http_enum_case(id="-75"; description="DiscountCodeExpired")]
     DiscountCodeExpired = -75,
 
-    #[http_enum_case(id="-76"; description="DiscountCodeForAnotherPackage")]
     DiscountCodeForAnotherPackage = -76,
 
-    #[http_enum_case(id="-77"; description="DiscountCodeOnlyForFirstPayin")]
     DiscountCodeOnlyForFirstPayin= -77,
 
-    #[http_enum_case(id="-78"; description="DiscountCodeOnlyForNextPayin")]
     DiscountCodeOnlyForNextPayin = -78,
 
-    #[http_enum_case(id="-80"; description="InvalidSiteLanguage")]
     InvalidSiteLanguage = -80,
 
-    #[http_enum_case(id="-90"; description="Competition not found")]
     CompetitionNotFound = -90,
 
-    #[http_enum_case(id="-91"; description="Competition has ended")]
     CompetitionEnded = -91,
 
-    #[http_enum_case(id="-92"; description="Competition registration is closed")]
     CompetitionRegistrationClosed = -92,
 
-    #[http_enum_case(id="-93"; description="Competition is full")]
     CompetitionFull = -93,
 
-    #[http_enum_case(id="-94"; description="Already enrolled in competition")]
     CompetitionAlreadyEnrolled = -94,
 
-    #[http_enum_case(id="-95"; description="Platform not allowed for this competition")]
     CompetitionPlatformNotAllowed = -95,
 
-    #[http_enum_case(id="-100"; description="UserHasOpenPositions")]
     UserHasOpenPositions = -100,
 
-    #[http_enum_case(id="-200"; description="RequestIsNoValid")]
     RequestIsNoValid = -200,
 
-    #[http_enum_case(id="-201"; description="AmountExceedsMax")]
     AmountExceedsMax = -201,
 
-    #[http_enum_case(id="-202"; description="AmountLessThanMin")]
     AmountLessThanMin = -202,
 
-    #[http_enum_case(id="-300"; description="TradingPlatformIsNotValid")]
     TradingPlatformIsNotValid = -300,
 
-    #[http_enum_case(id="-800"; description="Google recaptcha failed: too many requests")]
     RecaptchaVerificationIsFailed = -800,
 
-    #[http_enum_case(id="-800"; description="Google recaptcha is required")]
     RecaptchaIsRequired = -801,
 
-    #[http_enum_case(id="-900"; description="BrandIsNotSetUp")]
     BrandIsNotSetUp = -900,
 
-    #[http_enum_case(id="-999"; description="Force Update required")]
     ForceUpdateIsRequired = -999,
+}
+
+impl my_http_utils::schema::data_types::DataTypeProvider for ApiResultStatus {
+    fn get_data_type() -> my_http_utils::schema::data_types::HttpDataType {
+        use my_http_utils::schema::data_types::{EnumType, HttpEnumCase, HttpEnumStructure};
+
+        HttpEnumStructure {
+            struct_id: "ApiResultStatus",
+            enum_type: EnumType::Integer,
+            cases: vec![
+                HttpEnumCase {
+                    id: Self::Ok as i16,
+                    value: "Ok",
+                    description: "Operations was successful",
+                },
+                HttpEnumCase {
+                    id: Self::InvalidUserNameOrPassword as i16,
+                    value: "InvalidUserNameOrPassword",
+                    description: "Invalid username or password",
+                },
+                HttpEnumCase {
+                    id: Self::UserExists as i16,
+                    value: "UserExists",
+                    description: "User exists",
+                },
+                HttpEnumCase {
+                    id: Self::UserNotFound as i16,
+                    value: "UserNotFound",
+                    description: "User not found",
+                },
+                HttpEnumCase {
+                    id: Self::OldPasswordIsWrong as i16,
+                    value: "OldPasswordIsWrong",
+                    description: "Old password is wrong",
+                },
+                HttpEnumCase {
+                    id: Self::WrongFileExtension as i16,
+                    value: "WrongFileExtension",
+                    description: "Wrong file extension",
+                },
+                HttpEnumCase {
+                    id: Self::FileNotFound as i16,
+                    value: "FileNotFound",
+                    description: "File not found",
+                },
+                HttpEnumCase {
+                    id: Self::PersonalDataNotValid as i16,
+                    value: "PersonalDataNotValid",
+                    description: "Personal data is not valid",
+                },
+                HttpEnumCase {
+                    id: Self::SystemError as i16,
+                    value: "SystemError",
+                    description: "System error",
+                },
+                HttpEnumCase {
+                    id: Self::AccessTokenExpired as i16,
+                    value: "AccessTokenExpired",
+                    description: "AccessTokenExpired",
+                },
+                HttpEnumCase {
+                    id: Self::TechnicalError as i16,
+                    value: "TechnicalError",
+                    description: "TechnicalError",
+                },
+                HttpEnumCase {
+                    id: Self::CountryIsRestricted as i16,
+                    value: "CountryIsRestricted",
+                    description: "CountryRestriction",
+                },
+                HttpEnumCase {
+                    id: Self::AccessTokenInvalid as i16,
+                    value: "AccessTokenInvalid",
+                    description: "AccessTokenInvalid",
+                },
+                HttpEnumCase {
+                    id: Self::AccessClaimRequired as i16,
+                    value: "AccessClaimRequired",
+                    description: "AccessClaimRequired",
+                },
+                HttpEnumCase {
+                    id: Self::TraderPackageNotFound as i16,
+                    value: "TraderPackageNotFound",
+                    description: "TraderPackageNotFound",
+                },
+                HttpEnumCase {
+                    id: Self::OrderNotFound as i16,
+                    value: "OrderNotFound",
+                    description: "OrderNotFound",
+                },
+                HttpEnumCase {
+                    id: Self::OrderNotPaid as i16,
+                    value: "OrderNotPaid",
+                    description: "OrderNotPaid",
+                },
+                HttpEnumCase {
+                    id: Self::PasswordWasUsedBefore as i16,
+                    value: "PasswordWasUsedBefore",
+                    description: "Password was used before",
+                },
+                HttpEnumCase {
+                    id: Self::InvalidCodeEntered as i16,
+                    value: "InvalidCodeEntered",
+                    description: "InvalidCodeEntered",
+                },
+                HttpEnumCase {
+                    id: Self::NotEnoughBalance as i16,
+                    value: "NotEnoughBalance",
+                    description: "NotEnoughBalance",
+                },
+                HttpEnumCase {
+                    id: Self::NotAuthorized as i16,
+                    value: "NotAuthorized",
+                    description: "NotAuthorized",
+                },
+                HttpEnumCase {
+                    id: Self::RefreshTokenExpired as i16,
+                    value: "RefreshTokenExpired",
+                    description: "RefreshTokenExpired",
+                },
+                HttpEnumCase {
+                    id: Self::PayoutIsBlocked as i16,
+                    value: "PayoutIsBlocked",
+                    description: "PayoutIsBlocked",
+                },
+                HttpEnumCase {
+                    id: Self::TraderIsNotVerified as i16,
+                    value: "TraderIsNotVerified",
+                    description: "TraderIsNotVerified",
+                },
+                HttpEnumCase {
+                    id: Self::TraderIsAlreadyVerified as i16,
+                    value: "TraderIsAlreadyVerified",
+                    description: "TraderIsAlreadyVerified",
+                },
+                HttpEnumCase {
+                    id: Self::InvalidCode as i16,
+                    value: "InvalidCode",
+                    description: "InvalidCode",
+                },
+                HttpEnumCase {
+                    id: Self::InvalidDiscountCode as i16,
+                    value: "InvalidDiscountCode",
+                    description: "InvalidDiscountCode",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeUsageExceeded as i16,
+                    value: "DiscountCodeUsageExceeded",
+                    description: "DiscountCodeUsageExceeded",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeExpired as i16,
+                    value: "DiscountCodeExpired",
+                    description: "DiscountCodeExpired",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeForAnotherPackage as i16,
+                    value: "DiscountCodeForAnotherPackage",
+                    description: "DiscountCodeForAnotherPackage",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeOnlyForFirstPayin as i16,
+                    value: "DiscountCodeOnlyForFirstPayin",
+                    description: "DiscountCodeOnlyForFirstPayin",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeOnlyForNextPayin as i16,
+                    value: "DiscountCodeOnlyForNextPayin",
+                    description: "DiscountCodeOnlyForNextPayin",
+                },
+                HttpEnumCase {
+                    id: Self::InvalidSiteLanguage as i16,
+                    value: "InvalidSiteLanguage",
+                    description: "InvalidSiteLanguage",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionNotFound as i16,
+                    value: "CompetitionNotFound",
+                    description: "Competition not found",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionEnded as i16,
+                    value: "CompetitionEnded",
+                    description: "Competition has ended",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionRegistrationClosed as i16,
+                    value: "CompetitionRegistrationClosed",
+                    description: "Competition registration is closed",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionFull as i16,
+                    value: "CompetitionFull",
+                    description: "Competition is full",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionAlreadyEnrolled as i16,
+                    value: "CompetitionAlreadyEnrolled",
+                    description: "Already enrolled in competition",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionPlatformNotAllowed as i16,
+                    value: "CompetitionPlatformNotAllowed",
+                    description: "Platform not allowed for this competition",
+                },
+                HttpEnumCase {
+                    id: Self::UserHasOpenPositions as i16,
+                    value: "UserHasOpenPositions",
+                    description: "UserHasOpenPositions",
+                },
+                HttpEnumCase {
+                    id: Self::RequestIsNoValid as i16,
+                    value: "RequestIsNoValid",
+                    description: "RequestIsNoValid",
+                },
+                HttpEnumCase {
+                    id: Self::AmountExceedsMax as i16,
+                    value: "AmountExceedsMax",
+                    description: "AmountExceedsMax",
+                },
+                HttpEnumCase {
+                    id: Self::AmountLessThanMin as i16,
+                    value: "AmountLessThanMin",
+                    description: "AmountLessThanMin",
+                },
+                HttpEnumCase {
+                    id: Self::TradingPlatformIsNotValid as i16,
+                    value: "TradingPlatformIsNotValid",
+                    description: "TradingPlatformIsNotValid",
+                },
+                HttpEnumCase {
+                    id: Self::RecaptchaVerificationIsFailed as i16,
+                    value: "RecaptchaVerificationIsFailed",
+                    description: "Google recaptcha failed: too many requests",
+                },
+                HttpEnumCase {
+                    id: Self::RecaptchaIsRequired as i16,
+                    value: "RecaptchaIsRequired",
+                    description: "Google recaptcha is required",
+                },
+                HttpEnumCase {
+                    id: Self::BrandIsNotSetUp as i16,
+                    value: "BrandIsNotSetUp",
+                    description: "BrandIsNotSetUp",
+                },
+                HttpEnumCase {
+                    id: Self::ForceUpdateIsRequired as i16,
+                    value: "ForceUpdateIsRequired",
+                    description: "Force Update required",
+                },
+            ],
+        }
+        .into_http_data_type_object()
+    }
+
+    fn get_generic_type() -> Option<String> {
+        None
+    }
+}
+
+// Nested-in-object writing goes through my_json, not serde, so it must agree with Serialize_repr.
+impl my_http_utils::my_json::json_writer::JsonValueWriter for ApiResultStatus {
+    const IS_ARRAY: bool = false;
+
+    fn write(&self, dest: &mut String) {
+        my_http_utils::my_json::json_writer::JsonValueWriter::write(&(*self as i16), dest);
+    }
 }
 
 impl ApiResultStatus {
@@ -237,11 +459,29 @@ impl Into<HttpFailResult> for ApiResultStatus {
     }
 }
 
-#[derive(Serialize, MyHttpObjectStructure)]
+#[derive(MyHttpObjectStructure)]
 pub struct ApiHttpResultWithData<TData: Serialize + DataTypeProvider> {
     pub result: ApiResultStatus,
-    #[serde(skip_serializing_if = "Option::is_none")] 
     pub data: Option<TData>,
+}
+
+// Hand-written to keep `skip_serializing_if = "Option::is_none"`: the derive now rejects serde
+// attributes, but dropping the behaviour would add `"data": null` to every serde-rendered
+// response (all HttpFailResult bodies).
+impl<TData: Serialize + DataTypeProvider> Serialize for ApiHttpResultWithData<TData> {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeStruct;
+
+        let fields = if self.data.is_some() { 2 } else { 1 };
+        let mut state = serializer.serialize_struct("ApiHttpResultWithData", fields)?;
+        state.serialize_field("result", &self.result)?;
+
+        if let Some(data) = &self.data {
+            state.serialize_field("data", data)?;
+        }
+
+        state.end()
+    }
 }
 
 impl<TData: Serialize + DataTypeProvider> Into<HttpFailResult> for ApiHttpResultWithData<TData> {
@@ -262,21 +502,58 @@ impl<TData: Serialize + DataTypeProvider> Into<HttpFailResult> for ApiHttpResult
 
 #[cfg(test)]
 mod test {
-    use super::ApiResultStatus;
+    use super::{ApiHttpResultWithData, ApiResultStatus};
     use serde::Serialize;
+
     #[derive(Serialize, Debug)]
     pub struct TestStruct {
         result: ApiResultStatus,
     }
 
+    // These assert the wire contract every rest-api consumer depends on. They exist because
+    // my-http-server 0.9.0 can silently turn the integer into a case-name string.
     #[test]
-    pub fn test_result_deserialization() {
+    pub fn status_serializes_as_integer() {
         let test_struct = TestStruct {
             result: ApiResultStatus::AccessTokenExpired,
         };
 
-        let result = serde_json::to_string(&test_struct).unwrap();
+        assert_eq!(
+            serde_json::to_string(&test_struct).unwrap(),
+            r#"{"result":-9}"#
+        );
+    }
 
-        println!("{}", result);
+    #[test]
+    pub fn status_writes_as_integer_through_my_json() {
+        use my_http_utils::my_json::json_writer::JsonValueWriter;
+
+        let mut dest = String::new();
+        ApiResultStatus::AccessTokenExpired.write(&mut dest);
+
+        assert_eq!(dest, "-9");
+    }
+
+    #[test]
+    pub fn data_is_omitted_when_none() {
+        let result: ApiHttpResultWithData<String> = ApiHttpResultWithData {
+            result: ApiResultStatus::Ok,
+            data: None,
+        };
+
+        assert_eq!(serde_json::to_string(&result).unwrap(), r#"{"result":0}"#);
+    }
+
+    #[test]
+    pub fn data_is_written_when_some() {
+        let result = ApiHttpResultWithData {
+            result: ApiResultStatus::Ok,
+            data: Some("payload".to_string()),
+        };
+
+        assert_eq!(
+            serde_json::to_string(&result).unwrap(),
+            r#"{"result":0,"data":"payload"}"#
+        );
     }
 }

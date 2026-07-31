@@ -1,6 +1,6 @@
 [package]
 name = "rest-api-wl-shared"
-version = "8.0.6"
+version = "9.0.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,9 +11,15 @@ auth-middleware = ["service-sdk/my-nosql-data-reader-sdk"]
 
 
 [dependencies]
-service-sdk = { tag = "0.4.2", git = "https://github.com/MyJetTools/service-sdk.git", features = [
+service-sdk = { tag = "0.5.0", git = "https://github.com/MyJetTools/service-sdk.git", features = [
     "macros",
     "my-nosql-sdk",
+] }
+
+# my-http-server 0.9.0 moved the model derives into my-http-utils; they emit bare
+# `my_http_utils::` paths, so the crate must be in our extern prelude.
+my-http-utils = { tag = "0.1.0", git = "https://github.com/MyJetTools/my-http-utils.git", features = [
+    "server",
 ] }
 
 rust-common = { tag = "0.1.1", git = "https://github.com/MyJetTools/rust-common", features = [
