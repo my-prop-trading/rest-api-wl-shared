@@ -1,59 +1,43 @@
-use std::str::FromStr;
 use crate::{ApiHttpResultWithData, ApiResultStatus};
 use phonenumber::PhoneNumber;
-use service_sdk::my_http_server::{HttpOutput, WebContentType};
-use service_sdk::{
-    my_http_server::{HttpContext, HttpFailResult},
-    rust_extensions::date_time::DateTimeAsMicroseconds,
-};
+use service_sdk::my_http_server::{HttpFailResult, HttpOutput, WebContentType};
+use service_sdk::rust_extensions::date_time::DateTimeAsMicroseconds;
+use std::str::FromStr;
 
-pub fn validate_non_empty(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+// my-http-server 0.9.0 derives call a validator as `f(value) -> Result<(), impl Display>` and wrap
+// the error into a 400 themselves. Optional fields are unwrapped by the derive, so `*_optional`
+// wrappers are gone — point the attribute at the plain validator.
+
+pub fn validate_non_empty(value: &str) -> Result<(), String> {
     if validate_non_empty_text(value) {
         return Ok(());
     }
 
-    Err(create_fail_http_result("Should not be empty"))
+    Err("Should not be empty".to_string())
 }
 
-pub fn validate_email(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_email(value: &str) -> Result<(), String> {
     if !validate_email_text(value) {
-        return Err(create_fail_http_result("Invalid Email format"));
+        return Err("Invalid Email format".to_string());
     }
 
     if !validate_max(value, 64) {
-        return Err(create_fail_http_result("Max length is 64 symbols"));
+        return Err("Max length is 64 symbols".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "Should not start or end with space",
-        ));
+        return Err("Should not start or end with space".to_string());
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result("No cyrillic letters are allowed"));
+        return Err("No cyrillic letters are allowed".to_string());
     }
 
-    return Ok(());
+    Ok(())
 }
 
-pub fn validate_email_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    match value {
-        Some(value) => {
-            return validate_email(_ctx, value);
-        }
-        None => Ok(()),
-    }
-}
-
-pub fn validate_password(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    match validate_password_conditions(value) {
-        Ok(_) => Ok(()),
-        Err(err_msg) => Err(HttpFailResult::as_validation_error(err_msg)),
-    }
+pub fn validate_password(value: &str) -> Result<(), String> {
+    validate_password_conditions(value)
 }
 
 pub fn validate_password_conditions(value: &str) -> Result<(), String> {
@@ -85,252 +69,139 @@ pub fn validate_password_conditions(value: &str) -> Result<(), String> {
     Ok(())
 }
 
-pub fn validate_phone(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_phone(value: &str) -> Result<(), String> {
     if !validate_non_empty_text(value) {
-        return Err(create_fail_http_result("Phone: Should not be empty"));
+        return Err("Phone: Should not be empty".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "Phone: Should not start or end with space",
-        ));
+        return Err("Phone: Should not start or end with space".to_string());
     }
 
     if validate_phone_text(value) {
         return Ok(());
     }
 
-    Err(create_fail_http_result("Phone is not valid!"))
-}
-
-pub fn validate_phone_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    match value {
-        Some(value) => {
-            return validate_phone(_ctx, value);
-        }
-        None => Ok(()),
-    }
+    Err("Phone is not valid!".to_string())
 }
 
 fn validate_phone_text(value: &str) -> bool {
     let number = PhoneNumber::from_str(value);
 
     match number {
-        Ok(number) => {
-            return number.is_valid();
-        }
-        Err(_) => {
-            return false;
-        }
+        Ok(number) => number.is_valid(),
+        Err(_) => false,
     }
 }
 
-pub fn validate_name(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_name(value: &str) -> Result<(), String> {
     if !validate_max(value, 32) {
-        return Err(create_fail_http_result("Name: Max length is 32 symbols"));
+        return Err("Name: Max length is 32 symbols".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "Should not start or end with space",
-        ));
+        return Err("Should not start or end with space".to_string());
     }
 
     if !validate_latin_letters_with_spaces(value) {
-        return Err(create_fail_http_result(
-            "Name: Only latin letters are allowed",
-        ));
+        return Err("Name: Only latin letters are allowed".to_string());
     }
 
-    return Ok(());
+    Ok(())
 }
 
-pub fn validate_name_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    match value {
-        Some(value) => {
-            return validate_name(_ctx, value);
-        }
-        None => Ok(()),
-    }
-}
-
-pub fn validate_name_with_spaces(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_name_with_spaces(value: &str) -> Result<(), String> {
     if !validate_latin_letters_with_spaces(value) {
-        return Err(create_fail_http_result(
-            "Name: Only latin letters and spaces are allowed",
-        ));
+        return Err("Name: Only latin letters and spaces are allowed".to_string());
     }
 
     if !validate_max(value, 32) {
-        return Err(create_fail_http_result("Name: Max length is 32 symbols"));
+        return Err("Name: Max length is 32 symbols".to_string());
     }
 
-    return Ok(());
+    Ok(())
 }
 
-pub fn validate_name_with_spaces_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    match value {
-        Some(value) => {
-            return validate_name_with_spaces(_ctx, value);
-        }
-        None => Ok(()),
-    }
-}
+pub fn validate_date_of_birth(value: &str) -> Result<(), String> {
+    const ADULT_AGE_YEARS: u64 = 18;
+    const SECS_IN_YEAR: u64 = 60 * 60 * 24 * 365;
 
-pub fn validate_date_of_birth(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
     let value = match DateTimeAsMicroseconds::from_str(value) {
         Some(x) => x,
-        None => return Err(create_fail_http_result("DateOfBirth: Not a valid date!")),
+        None => return Err("DateOfBirth: Not a valid date!".to_string()),
     };
 
     let now = DateTimeAsMicroseconds::now();
-    let diff = now.duration_since(value);
 
-    match diff {
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Positive(x) => {
-            // turn secunds to years
-            let x = x.as_secs() / 60 / 60 / 24 / 365;
-            if x < 18 {
-                return Err(create_fail_http_result(
-                    "DateOfBirth: Should be older than 18",
-                ));
-            }
-
+    if let service_sdk::rust_extensions::date_time::DateTimeDuration::Positive(duration) =
+        now.duration_since(value)
+    {
+        if duration.as_secs() / SECS_IN_YEAR >= ADULT_AGE_YEARS {
             return Ok(());
         }
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Negative(_) => {}
-        service_sdk::rust_extensions::date_time::DateTimeDuration::Zero => {}
     }
 
-    return Err(create_fail_http_result(
-        "DateOfBirth: Should be older than 18",
-    ));
+    Err("DateOfBirth: Should be older than 18".to_string())
 }
 
-pub fn validate_date_of_birth_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    match value {
-        Some(value) => {
-            return validate_date_of_birth(_ctx, value);
-        }
-        None => Ok(()),
-    }
-}
-
-pub fn validate_address(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_address(value: &str) -> Result<(), String> {
     if !validate_max(value, 50) {
-        return Err(create_fail_http_result("Address: Max length is 50 symbols"));
+        return Err("Address: Max length is 50 symbols".to_string());
     }
 
     if !validate_non_empty_text(value) {
-        return Err(create_fail_http_result("Address: Should not be empty"));
+        return Err("Address: Should not be empty".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "Address: Should not start or end with space",
-        ));
+        return Err("Address: Should not start or end with space".to_string());
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result(
-            "Address: No cyrillic letters are allowed",
-        ));
+        return Err("Address: No cyrillic letters are allowed".to_string());
     }
 
-    return Ok(());
+    Ok(())
 }
 
-pub fn validate_address_optional(
-    ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    let Some(value) = value else {
-        return Ok(());
-    };
-
-    return validate_address(ctx, value);
-}
-
-pub fn validate_city(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_city(value: &str) -> Result<(), String> {
     if !validate_max(value, 50) {
-        return Err(create_fail_http_result("City: Max length is 50 symbols"));
+        return Err("City: Max length is 50 symbols".to_string());
     }
 
     if !validate_non_empty_text(value) {
-        return Err(create_fail_http_result("City: Should not be empty"));
+        return Err("City: Should not be empty".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "City: Should not start or end with space",
-        ));
+        return Err("City: Should not start or end with space".to_string());
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result(
-            "City: No cyrillic letters are allowed",
-        ));
+        return Err("City: No cyrillic letters are allowed".to_string());
     }
 
-    return Ok(());
+    Ok(())
 }
 
-pub fn validate_city_optional(
-    ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    let Some(value) = value else {
-        return Ok(());
-    };
-
-    return validate_city(ctx, value);
-}
-
-pub fn validate_zip_code(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
+pub fn validate_zip_code(value: &str) -> Result<(), String> {
     if !validate_max(value, 10) {
-        return Err(create_fail_http_result("ZipCode: Max length is 10 symbols"));
+        return Err("ZipCode: Max length is 10 symbols".to_string());
     }
 
     if !validate_non_empty_text(value) {
-        return Err(create_fail_http_result("ZipCode: Should not be empty"));
+        return Err("ZipCode: Should not be empty".to_string());
     }
 
     if !validate_no_trimm_spaces(value) {
-        return Err(create_fail_http_result(
-            "ZipCode: Should not start or end with space",
-        ));
+        return Err("ZipCode: Should not start or end with space".to_string());
     }
 
     if !validate_no_cyrillic(value) {
-        return Err(create_fail_http_result(
-            "ZipCode: No cyrillic letters are allowed",
-        ));
+        return Err("ZipCode: No cyrillic letters are allowed".to_string());
     }
 
-    return Ok(());
-}
-
-pub fn validate_zip_code_optional(
-    ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    let Some(value) = value else {
-        return Ok(());
-    };
-
-    return validate_zip_code(ctx, value);
+    Ok(())
 }
 
 pub fn validate_latin_letters_only(src: &str) -> bool {
@@ -395,6 +266,7 @@ pub fn contains_special_symbol(value: &str) -> bool {
         .any(|b| SPECIAL_SYMBOLS.iter().any(|c| *c as u8 == *b))
 }
 
+/// Builds the legacy `{result, data}` 400 payload for handlers that validate inline.
 pub fn create_fail_http_result(error: &str) -> HttpFailResult {
     let output = HttpOutput::from_builder()
         .set_status_code(400)
@@ -517,5 +389,13 @@ mod tests {
             result,
             Err("Password must contain at least one special symbol".to_string())
         );
+    }
+
+    #[test]
+    fn date_of_birth_rejects_underage() {
+        let mut recent = DateTimeAsMicroseconds::now();
+        recent.add_days(-365);
+
+        assert!(validate_date_of_birth(&recent.to_rfc3339()).is_err());
     }
 }

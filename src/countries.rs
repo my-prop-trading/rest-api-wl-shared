@@ -1,6 +1,5 @@
 use lazy_static::lazy_static;
 use rust_common::country_code::CountryCode;
-use service_sdk::my_http_server::{HttpContext, HttpFailResult};
 use std::collections::HashMap;
 
 lazy_static! {
@@ -29,30 +28,11 @@ lazy_static! {
     };
 }
 
-pub fn validate_country(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    let valid_code = rust_common::country_code::CountryCode::parse(value);
-
-    match valid_code {
-        Ok(_) => {
-            return Ok(());
-        }
-        Err(_) => {
-            return Err(HttpFailResult::as_validation_error(
-                "Invalid country".to_string(),
-            ));
-        }
+pub fn validate_country(value: &str) -> Result<(), String> {
+    match rust_common::country_code::CountryCode::parse(value) {
+        Ok(_) => Ok(()),
+        Err(_) => Err("Invalid country".to_string()),
     }
-}
-
-pub fn validate_country_optional(
-    _ctx: &HttpContext,
-    value: &Option<String>,
-) -> Result<(), HttpFailResult> {
-    let Some(value) = value else {
-        return Ok(());
-    };
-
-    validate_country(_ctx, value)
 }
 
 fn get_country_pairs() -> [(&'static str, &'static str); 247] {
