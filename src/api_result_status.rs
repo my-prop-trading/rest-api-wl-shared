@@ -104,6 +104,9 @@ pub enum ApiResultStatus {
 
     RecaptchaIsRequired = -801,
 
+    /// An anti-abuse rule is holding this client's IP; `data` carries `retryAfterHours`.
+    RegistrationIsRestricted = -802,
+
     BrandIsNotSetUp = -900,
 
     ForceUpdateIsRequired = -999,
@@ -348,6 +351,11 @@ impl my_http_utils::schema::data_types::DataTypeProvider for ApiResultStatus {
                     description: "Google recaptcha is required",
                 },
                 HttpEnumCase {
+                    id: Self::RegistrationIsRestricted as i16,
+                    value: "RegistrationIsRestricted",
+                    description: "Too many registrations from this IP",
+                },
+                HttpEnumCase {
                     id: Self::BrandIsNotSetUp as i16,
                     value: "BrandIsNotSetUp",
                     description: "BrandIsNotSetUp",
@@ -418,6 +426,7 @@ impl ApiResultStatus {
             ApiResultStatus::InvalidSiteLanguage => 400,
             ApiResultStatus::RecaptchaIsRequired => 200,
             ApiResultStatus::RecaptchaVerificationIsFailed => 200,
+            ApiResultStatus::RegistrationIsRestricted => 200,
             ApiResultStatus::TradingPlatformIsNotValid => 400,
             ApiResultStatus::DiscountCodeOnlyForFirstPayin => 200,
             ApiResultStatus::DiscountCodeOnlyForNextPayin => 200,
