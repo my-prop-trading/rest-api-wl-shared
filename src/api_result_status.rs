@@ -90,6 +90,13 @@ pub enum ApiResultStatus {
 
     CompetitionPlatformNotAllowed = -95,
 
+    // PROP25-2582
+    CompetitionNotEligible = -96,
+
+    CompetitionAllAccountsClaimed = -97,
+
+    CompetitionNotStarted = -98,
+
     UserHasOpenPositions = -100,
 
     RequestIsNoValid = -200,
@@ -316,6 +323,21 @@ impl my_http_utils::schema::data_types::DataTypeProvider for ApiResultStatus {
                     description: "Platform not allowed for this competition",
                 },
                 HttpEnumCase {
+                    id: Self::CompetitionNotEligible as i16,
+                    value: "CompetitionNotEligible",
+                    description: "Not eligible for this competition",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionAllAccountsClaimed as i16,
+                    value: "CompetitionAllAccountsClaimed",
+                    description: "All competition accounts have been claimed",
+                },
+                HttpEnumCase {
+                    id: Self::CompetitionNotStarted as i16,
+                    value: "CompetitionNotStarted",
+                    description: "Competition has not started yet",
+                },
+                HttpEnumCase {
                     id: Self::UserHasOpenPositions as i16,
                     value: "UserHasOpenPositions",
                     description: "UserHasOpenPositions",
@@ -436,6 +458,9 @@ impl ApiResultStatus {
             ApiResultStatus::CompetitionFull => 400,
             ApiResultStatus::CompetitionAlreadyEnrolled => 400,
             ApiResultStatus::CompetitionPlatformNotAllowed => 400,
+            ApiResultStatus::CompetitionNotEligible => 400,
+            ApiResultStatus::CompetitionAllAccountsClaimed => 400,
+            ApiResultStatus::CompetitionNotStarted => 400,
         }
     }
 }
