@@ -228,9 +228,13 @@ pub fn validate_date_of_birth_optional(
     }
 }
 
+const ADDRESS_MAX_LEN: usize = 100;
+
 pub fn validate_address(_ctx: &HttpContext, value: &str) -> Result<(), HttpFailResult> {
-    if !validate_max(value, 50) {
-        return Err(create_fail_http_result("Address: Max length is 50 symbols"));
+    if !validate_max(value, ADDRESS_MAX_LEN) {
+        return Err(create_fail_http_result(&format!(
+            "Address: Max length is {ADDRESS_MAX_LEN} symbols"
+        )));
     }
 
     if !validate_non_empty_text(value) {
