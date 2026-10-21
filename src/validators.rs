@@ -144,9 +144,11 @@ pub fn validate_date_of_birth(value: &str) -> Result<(), String> {
     Err("DateOfBirth: Should be older than 18".to_string())
 }
 
+const ADDRESS_MAX_LEN: usize = 100;
+
 pub fn validate_address(value: &str) -> Result<(), String> {
-    if !validate_max(value, 50) {
-        return Err("Address: Max length is 50 symbols".to_string());
+    if !validate_max(value, ADDRESS_MAX_LEN) {
+        return Err(format!("Address: Max length is {ADDRESS_MAX_LEN} symbols"));
     }
 
     if !validate_non_empty_text(value) {
