@@ -76,6 +76,13 @@ pub enum ApiResultStatus {
 
     DiscountCodeOnlyForNextPayin = -78,
 
+    // PROP25-2690
+    DiscountCodeWrongPlatform = -81,
+
+    DiscountCodeOwnedByAnotherClient = -82,
+
+    DiscountCodeAlreadyUsed = -83,
+
     InvalidSiteLanguage = -80,
 
     CompetitionNotFound = -90,
@@ -278,6 +285,21 @@ impl my_http_utils::schema::data_types::DataTypeProvider for ApiResultStatus {
                     description: "DiscountCodeOnlyForNextPayin",
                 },
                 HttpEnumCase {
+                    id: Self::DiscountCodeWrongPlatform as i16,
+                    value: "DiscountCodeWrongPlatform",
+                    description: "Discount code is not valid on the chosen trading platform",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeOwnedByAnotherClient as i16,
+                    value: "DiscountCodeOwnedByAnotherClient",
+                    description: "Personal discount code belongs to another account",
+                },
+                HttpEnumCase {
+                    id: Self::DiscountCodeAlreadyUsed as i16,
+                    value: "DiscountCodeAlreadyUsed",
+                    description: "Personal discount code has already been used",
+                },
+                HttpEnumCase {
                     id: Self::InvalidSiteLanguage as i16,
                     value: "InvalidSiteLanguage",
                     description: "InvalidSiteLanguage",
@@ -421,6 +443,9 @@ impl ApiResultStatus {
             ApiResultStatus::TradingPlatformIsNotValid => 400,
             ApiResultStatus::DiscountCodeOnlyForFirstPayin => 200,
             ApiResultStatus::DiscountCodeOnlyForNextPayin => 200,
+            ApiResultStatus::DiscountCodeWrongPlatform => 200,
+            ApiResultStatus::DiscountCodeOwnedByAnotherClient => 200,
+            ApiResultStatus::DiscountCodeAlreadyUsed => 400,
             ApiResultStatus::CompetitionNotFound => 400,
             ApiResultStatus::CompetitionEnded => 400,
             ApiResultStatus::CompetitionRegistrationClosed => 400,
