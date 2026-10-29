@@ -106,6 +106,15 @@ pub enum ApiResultStatus {
 
     UserHasOpenPositions = -100,
 
+    // PROP25-2751 Free Trial
+    FreeTrialDisabled = -110,
+
+    FreeTrialNotEligible = -111,
+
+    FreeTrialBlockedCountry = -112,
+
+    FreeTrialNameRequired = -113,
+
     RequestIsNoValid = -200,
 
     AmountExceedsMax = -201,
@@ -360,6 +369,26 @@ impl my_http_utils::schema::data_types::DataTypeProvider for ApiResultStatus {
                     description: "Competition has not started yet",
                 },
                 HttpEnumCase {
+                    id: Self::FreeTrialDisabled as i16,
+                    value: "FreeTrialDisabled",
+                    description: "Free Trial is switched off",
+                },
+                HttpEnumCase {
+                    id: Self::FreeTrialNotEligible as i16,
+                    value: "FreeTrialNotEligible",
+                    description: "The client can't start a Free Trial",
+                },
+                HttpEnumCase {
+                    id: Self::FreeTrialBlockedCountry as i16,
+                    value: "FreeTrialBlockedCountry",
+                    description: "Free Trial is not available in the client's country",
+                },
+                HttpEnumCase {
+                    id: Self::FreeTrialNameRequired as i16,
+                    value: "FreeTrialNameRequired",
+                    description: "First and last name are needed to start a Free Trial",
+                },
+                HttpEnumCase {
                     id: Self::UserHasOpenPositions as i16,
                     value: "UserHasOpenPositions",
                     description: "UserHasOpenPositions",
@@ -486,6 +515,10 @@ impl ApiResultStatus {
             ApiResultStatus::CompetitionNotEligible => 400,
             ApiResultStatus::CompetitionAllAccountsClaimed => 400,
             ApiResultStatus::CompetitionNotStarted => 400,
+            ApiResultStatus::FreeTrialDisabled => 400,
+            ApiResultStatus::FreeTrialNotEligible => 400,
+            ApiResultStatus::FreeTrialBlockedCountry => 400,
+            ApiResultStatus::FreeTrialNameRequired => 400,
         }
     }
 }
